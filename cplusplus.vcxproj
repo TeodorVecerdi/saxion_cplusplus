@@ -90,6 +90,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <DisableSpecificWarnings>26812</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>source</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,12 +143,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Scoreboard.cpp" />
-    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="source\Scoreboard.cpp" />
+    <ClCompile Include="source\Sprite.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Scoreboard.hpp" />
-    <ClInclude Include="Sprite.hpp" />
+    <ClInclude Include="source\Scoreboard.hpp" />
+    <ClInclude Include="source\Sprite.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

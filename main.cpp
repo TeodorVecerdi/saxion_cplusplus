@@ -1,5 +1,4 @@
 #include <SFML/Graphics.hpp>
-
 #include "Sprite.hpp"
 
 int main() {
@@ -11,15 +10,13 @@ int main() {
 		return -1;
 	}
 
-	Sprite sprites[2]{
-		Sprite(texture, sf::Vector2f(0, 0), 10),
-		Sprite(texture, sf::Vector2f(0, 400), 5)
-	};
+	Sprite sprites[2]{Sprite(texture, sf::Vector2f(0, 0), 10), Sprite(texture, sf::Vector2f(0, 400), 5)};
 
 	while (window.isOpen()) {
 		sf::Event event{};
 		while (window.pollEvent(event)) {
-			if (event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Key::Escape)) {
+			if (event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed && event.key.code ==
+				sf::Keyboard::Key::Escape)) {
 				window.close();
 			}
 

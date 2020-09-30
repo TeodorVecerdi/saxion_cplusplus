@@ -15,21 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Scoreboard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sprite.cpp">
+    <ClCompile Include="source\Scoreboard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sprite.hpp">
+    <ClInclude Include="source\Scoreboard.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scoreboard.hpp">
+    <ClInclude Include="source\Sprite.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
