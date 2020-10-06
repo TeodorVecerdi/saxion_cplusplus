@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30517.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cplusplus", "cplusplus.vcxproj", "{D92A9D4F-5413-4FF4-8A55-1A984F09A689}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cplusplus/cplusplus", "cplusplus/cplusplus.vcxproj", "{D92A9D4F-5413-4FF4-8A55-1A984F09A689}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

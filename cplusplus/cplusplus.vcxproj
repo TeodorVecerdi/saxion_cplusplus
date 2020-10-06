@@ -90,7 +90,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <DisableSpecificWarnings>26812</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,12 +143,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="source\Scoreboard.cpp" />
-    <ClCompile Include="source\Sprite.cpp" />
+    <ClCompile Include="src\Core\GameObject.cpp" />
+    <ClCompile Include="src\Game\Sprite.cpp" />
+    <ClCompile Include="src\Game\PlayerController.cpp" />
+    <ClCompile Include="src\Core\Scoreboard.cpp" />
+    <ClCompile Include="src\Core\ScriptableBehaviour.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\Scoreboard.hpp" />
-    <ClInclude Include="source\Sprite.hpp" />
+    <ClInclude Include="src\Core\Input.hpp" />
+    <ClInclude Include="src\Game\Sprite.hpp" />
+    <ClInclude Include="src\Game\PlayerController.hpp" />
+    <ClInclude Include="src\Utils\Debug.hpp" />
+    <ClInclude Include="src\Core\GameObject.hpp" />
+    <ClInclude Include="src\Score.hpp" />
+    <ClInclude Include="src\Core\Scoreboard.hpp" />
+    <ClInclude Include="src\Core\ScriptableBehaviour.hpp" />
+    <ClInclude Include="src\Utils\StringUtils.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
