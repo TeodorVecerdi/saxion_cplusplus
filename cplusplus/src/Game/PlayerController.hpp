@@ -4,12 +4,11 @@
 
 class PlayerController final : public ScriptableBehaviour {
 public:
-	PlayerController(const std::string& identifier, float speed, Sprite& sprite);
+	PlayerController(const std::string& identifier, float speed, float rotationSpeed);
 protected:
 	void onUpdate(sf::Time ts) override;
-	void onStart() override;
 
 private:
 	float speed;
-	Sprite& sprite;
+	float rotationSpeed;
 };

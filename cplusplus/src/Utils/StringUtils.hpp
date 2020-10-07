@@ -6,7 +6,7 @@
 
 // Taken from: https://stackoverflow.com/a/26221725/5181524
 template<typename ... Args>
-std::string string_format(_Printf_format_string_ const std::string& format, Args ... args) {
+std::string string_format(const std::string& format, Args ... args) {
     size_t size = snprintf(nullptr, 0, format.c_str(), args ...) + 1;
     if(size <= 0) { throw std::runtime_error("Error during formatting."); }
     std::unique_ptr<char[]> buf(new char[size]);

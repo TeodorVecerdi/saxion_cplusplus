@@ -1,21 +1,22 @@
 ﻿#include "PlayerController.hpp"
 #include <SFML/Window/Keyboard.hpp>
-
 #include "Core/Input.hpp"
 
 void PlayerController::onUpdate(const sf::Time ts) {
 
-	sf::Vector2f movementVec(0, 0);
-	
-	if(Input::GetKey(sf::Keyboard::Key::W) || Input::GetKey(sf::Keyboard::Key::Up)) movementVec.y -= 1;
-	if(Input::GetKey(sf::Keyboard::Key::S) || Input::GetKey(sf::Keyboard::Key::Down)) movementVec.y += 1;
-	if(Input::GetKey(sf::Keyboard::Key::A) || Input::GetKey(sf::Keyboard::Key::Left)) movementVec.x -= 1;
-	if(Input::GetKey(sf::Keyboard::Key::D) || Input::GetKey(sf::Keyboard::Key::Right)) movementVec.x += 1;
+	glm::vec2 movementVec(0, 0);
+	float rotation = 0;
 
-	sprite.movePosition(movementVec * (speed * ts.asSeconds()));
+	if (Input::GetKey(sf::Keyboard::Key::W)) movementVec.y -= 1;
+	if (Input::GetKey(sf::Keyboard::Key::S)) movementVec.y += 1;
+	if (Input::GetKey(sf::Keyboard::Key::A)) movementVec.x -= 1;
+	if (Input::GetKey(sf::Keyboard::Key::D)) movementVec.x += 1;
+
+	if (Input::GetKey(sf::Keyboard::Key::Q)) rotation += -1;
+	if (Input::GetKey(sf::Keyboard::Key::E)) rotation += 1;
+
+	owner->movePosition(movementVec * (speed * ts.asSeconds()));
+	owner->setRotation(owner->getRotation() + rotation * rotationSpeed);
 }
 
-void PlayerController::onStart() {
-	printf("PlayerController[%s]::onStart called", getIdentifier().c_str());
-}
-PlayerController::PlayerController(const std::string& identifier, const float speed, Sprite& sprite) : ScriptableBehaviour(identifier), speed(speed), sprite(sprite) {}
+PlayerController::PlayerController(const std::string& identifier, const float speed, float rotationSpeed) : ScriptableBehaviour(identifier), speed(speed), rotationSpeed(rotationSpeed) {}

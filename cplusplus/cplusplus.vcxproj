@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\Game\OtherPlayerController.cpp" />
     <ClCompile Include="src\Core\GameObject.cpp" />
     <ClCompile Include="src\Game\Sprite.cpp" />
     <ClCompile Include="src\Game\PlayerController.cpp" />
@@ -150,9 +151,11 @@
     <ClCompile Include="src\Core\ScriptableBehaviour.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Game\OtherPlayerController.hpp" />
     <ClInclude Include="src\Core\Input.hpp" />
     <ClInclude Include="src\Game\Sprite.hpp" />
     <ClInclude Include="src\Game\PlayerController.hpp" />
+    <ClInclude Include="src\Core\Transform2D.hpp" />
     <ClInclude Include="src\Utils\Debug.hpp" />
     <ClInclude Include="src\Core\GameObject.hpp" />
     <ClInclude Include="src\Score.hpp" />
