@@ -1,5 +1,5 @@
+#include "Core.hpp"
 #include "Scoreboard.hpp"
-#include <algorithm>
 
 Scoreboard::Scoreboard(int maxScores, const char* scoreboardFilePath) : maxScores(maxScores), scoreboardFilePath(scoreboardFilePath) {
 	scores = new Score[maxScores];

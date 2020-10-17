@@ -1,6 +1,7 @@
 ﻿#include "GameObject.hpp"
-#include "Utils/Debug.hpp"
 #include <glm/gtc/matrix_transform.hpp>
+
+GameObject::GameObject() : GameObject(default_identifier(this)) {}
 GameObject::GameObject(const std::string identifier) : transform(Transform2D(glm::vec2(0, 0), glm::vec2(1, 1), glm::vec2(.5f, .5f), glm::vec3(0))), identifier(identifier), ranStart(false) {}
 GameObject::GameObject(const GameObject& other) : transform(other.transform), identifier(other.identifier), ranStart(false) {}
 
@@ -9,14 +10,24 @@ void GameObject::update(const sf::Time ts) {
 		ranStart = true;
 		onStart();
 	}
-	for (auto [id, behaviour] : scriptableBehaviours) {
+	for (auto* behaviour : scriptableBehaviours) {
 		behaviour->update(ts);
 	}
+	for (auto* child : children) {
+		child->update(ts);
+	}
+
 	onUpdate(ts);
 }
 
 void GameObject::render(sf::RenderWindow& window) const {
 	onRender(window);
+	for (auto* behaviour : scriptableBehaviours) {
+		behaviour->render(window);
+	}
+	for (auto* child : children) {
+		child->render(window);
+	}
 }
 
 std::string GameObject::getIdentifier() const {
@@ -25,9 +36,10 @@ std::string GameObject::getIdentifier() const {
 
 void GameObject::addScriptableBehaviour(ScriptableBehaviour& behaviour) {
 	auto id = behaviour.getIdentifier();
-	ASSERT(!scriptableBehaviours.contains(id), "Cannot add a ScriptableBehaviour with identifier [" << id << "] when another one with the same identifier already exists.");
+	ASSERT(!scriptableBehaviourMap.contains(id), "Cannot add a ScriptableBehaviour with identifier [" << id << "] when another one with the same identifier already exists.");
 	behaviour.setOwner(this);
-	scriptableBehaviours.emplace(std::make_pair(id, &behaviour));
+	scriptableBehaviourMap.emplace(std::make_pair(id, &behaviour));
+	scriptableBehaviours.push_back(&behaviour);
 }
 
 bool GameObject::removeScriptableBehaviour(ScriptableBehaviour& behaviour) {
@@ -35,20 +47,29 @@ bool GameObject::removeScriptableBehaviour(ScriptableBehaviour& behaviour) {
 }
 
 bool GameObject::removeScriptableBehaviour(const std::string& identifier) {
-	if (!scriptableBehaviours.contains(identifier)) {
+	if (!scriptableBehaviourMap.contains(identifier)) {
 		printf("GameObject[%s] does not contain a scriptable behaviour with identifier [%s]", this->identifier.c_str(), identifier.c_str());
 		return false;
 	}
-	scriptableBehaviours.at(identifier)->setOwner(nullptr);
-	scriptableBehaviours.erase(identifier);
+	auto* behaviour = scriptableBehaviourMap.at(identifier);
+	const auto it = std::find(scriptableBehaviours.begin(), scriptableBehaviours.end(), behaviour);
+	if(it == scriptableBehaviours.cend()) {
+		printf("Failed to find ScriptableBehaviour[%s] in behaviours list", identifier.c_str());
+		return false;
+	}
+
+	behaviour->setOwner(nullptr);
+	scriptableBehaviourMap.erase(identifier);
+	scriptableBehaviours.erase(it);
 	return true;
 }
 
 void GameObject::addChild(GameObject& gameObject) {
 	std::string id = gameObject.getIdentifier();
-	ASSERT(!children.contains(id), "Cannot add a child GameObject with identifier [" << id << "] when another one with the same identifier already exists.");
+	ASSERT(!childrenMap.contains(id), "Cannot add a child GameObject with identifier [" << id << "] when another one with the same identifier already exists.");
 	gameObject.parent = this;
-	children.emplace(std::make_pair(id, &gameObject));
+	childrenMap.emplace(std::make_pair(id, &gameObject));
+	children.push_back(&gameObject);
 }
 
 bool GameObject::removeChild(GameObject& gameObject) {
@@ -56,12 +77,19 @@ bool GameObject::removeChild(GameObject& gameObject) {
 }
 
 bool GameObject::removeChild(const std::string& identifier) {
-	if (!children.contains(identifier)) {
-		printf("GameObject[%s] does not contain a child with identifier [%s]", this->identifier.c_str(), identifier.c_str());
+	if (!childrenMap.contains(identifier)) {
+		printf("GameObject[%s] does not contain a child with identifier [%s]\n", this->identifier.c_str(), identifier.c_str());
 		return false;
 	}
-	children.at(identifier)->parent = nullptr;
-	children.erase(identifier);
+	auto* child = childrenMap.at(identifier);
+    const auto it = std::find(children.begin(), children.end(), child);
+	if(it == children.cend()) {
+		printf("Failed to find GameObject[%s] in children list", identifier.c_str());
+		return false;
+	}
+	child->parent = nullptr;
+	childrenMap.erase(identifier);
+	children.erase(it);
 	return true;
 }
 

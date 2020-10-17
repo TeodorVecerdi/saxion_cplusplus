@@ -1,7 +1,8 @@
 #pragma once
+#include "Core.hpp"
 
 struct Score {
-	int score;
+	int score = 0;
 	std::string name;
 };
 

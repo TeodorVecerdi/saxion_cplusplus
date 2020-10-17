@@ -119,6 +119,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,19 +143,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Game\Behaviours\SpriteRenderer.cpp" />
+    <ClCompile Include="src\Game\Button.cpp" />
+    <ClCompile Include="src\Game\Behaviours\FPSCounter.cpp" />
+    <ClCompile Include="src\Game\Label.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\Game\OtherPlayerController.cpp" />
+    <ClCompile Include="src\Core\SceneManager.cpp" />
+    <ClCompile Include="src\Core\Scene.cpp" />
+    <ClCompile Include="src\Game\Behaviours\OtherPlayerController.cpp" />
     <ClCompile Include="src\Core\GameObject.cpp" />
     <ClCompile Include="src\Game\Sprite.cpp" />
-    <ClCompile Include="src\Game\PlayerController.cpp" />
+    <ClCompile Include="src\Game\Behaviours\PlayerController.cpp" />
     <ClCompile Include="src\Core\Scoreboard.cpp" />
     <ClCompile Include="src\Core\ScriptableBehaviour.cpp" />
+    <ClCompile Include="src\Game\Behaviours\TextRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Game\OtherPlayerController.hpp" />
+    <ClInclude Include="src\Game\Behaviours\SpriteRenderer.hpp" />
+    <ClInclude Include="src\Game\Button.hpp" />
+    <ClInclude Include="src\Game\Behaviours\FPSCounter.hpp" />
+    <ClInclude Include="src\Game\Label.hpp" />
+    <ClInclude Include="src\Core.hpp" />
+    <ClInclude Include="src\Core\FontCache.hpp" />
+    <ClInclude Include="src\Core\SceneManager.hpp" />
+    <ClInclude Include="src\Core\Scene.hpp" />
+    <ClInclude Include="src\Game\Behaviours\OtherPlayerController.hpp" />
     <ClInclude Include="src\Core\Input.hpp" />
     <ClInclude Include="src\Game\Sprite.hpp" />
-    <ClInclude Include="src\Game\PlayerController.hpp" />
+    <ClInclude Include="src\Game\Behaviours\PlayerController.hpp" />
     <ClInclude Include="src\Core\Transform2D.hpp" />
     <ClInclude Include="src\Utils\Debug.hpp" />
     <ClInclude Include="src\Core\GameObject.hpp" />
@@ -162,6 +178,14 @@
     <ClInclude Include="src\Core\Scoreboard.hpp" />
     <ClInclude Include="src\Core\ScriptableBehaviour.hpp" />
     <ClInclude Include="src\Utils\StringUtils.hpp" />
+    <ClInclude Include="src\Game\Behaviours\TextRenderer.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\square.png" />
+    <Image Include="res\testTexture.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="res\arial.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

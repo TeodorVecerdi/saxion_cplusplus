@@ -1,85 +1,104 @@
-#include <SFML/Graphics.hpp>
+#include "Core/FontCache.hpp"
+
+#include "Core.hpp"
+
 #include "Core/Input.hpp"
-#include "Core/Scoreboard.hpp"
-#include "Game/OtherPlayerController.hpp"
-#include "Game/PlayerController.hpp"
+#include "Core/Scene.hpp"
+#include "Core/SceneManager.hpp"
+#include "Game/Button.hpp"
+#include "Game/Label.hpp"
+
 #include "Game/Sprite.hpp"
-#include "Utils/StringUtils.hpp"
+#include "Game/Behaviours/FPSCounter.hpp"
+#include "Game/Behaviours/OtherPlayerController.hpp"
+#include "Game/Behaviours/PlayerController.hpp"
+#include "Game/Behaviours/SpriteRenderer.hpp"
+#include "Game/Behaviours/TextRenderer.hpp"
 
 int main() {
-	sf::RenderWindow window(sf::VideoMode(1280, 720), "Hello SFML");
-	window.setVerticalSyncEnabled(true);
-	window.setView(sf::View(sf::FloatRect(0.0f, 0.0f, 1280, 720)));
-	sf::Clock deltaClock;
+    sf::RenderWindow window(sf::VideoMode(1280, 720), "Hello SFML");
+    window.setVerticalSyncEnabled(true);
+    window.setView(sf::View(sf::FloatRect(0.0f, 0.0f, 1280, 720)));
+    sf::Clock deltaClock;
 
-	// FPS
-	sf::Font font;
-	font.loadFromFile("res/arial.ttf");
-	sf::Text fpsText("", font);
-	fpsText.setOrigin(0, 0);
-	float minFPS = 100000000.0f;
-	float maxFPS = 0.0f;
-	float averageFPS = 0.0f;
-	int count = 0;
+    // FPS
+    sf::Font font;
+    font.loadFromFile("res/arial.ttf");
+    FontCache::RegisterFont("Arial", font);
 
-	Sprite sprite1("someSprite", "res/testTexture.png");
-	Sprite sprite2("someOtherSprite", "res/testTexture.png");
-	sprite2.setScale(glm::vec2(1, 1));
-	sprite2.setPosition(glm::vec2(64, 64));
-	Sprite sprite3("thirdSprite", "res/testTexture.png");
-	sprite3.setScale(glm::vec2(1, 1));
-	sprite3.setPosition(glm::vec2(64, 64));
-	
-	sprite1.addChild(sprite2);
-	sprite2.addChild(sprite3);
-	
-	PlayerController controller("someSprite_controller", 500.0f, 1);
-	OtherPlayerController otherController("someOtherSprite_controller", 100.0f, 1);
-	sprite1.addScriptableBehaviour(controller);
-	sprite2.addScriptableBehaviour(otherController);
+    Label fpsText("", "Arial");
+    fpsText.setFontSize(20);
+    fpsText.setOrigin(glm::vec2(0, 0));
+    GameObject blueBox;
+    SpriteRenderer r1("res/square.png");
+    r1.setColor(sf::Color::Blue);
+    r1.setSize(glm::vec2(200));
+    blueBox.addScriptableBehaviour(r1);
+    blueBox.setOrigin(glm::vec2(0.5));
+    blueBox.setPosition(glm::vec2(window.getSize().x / 2.0f, window.getSize().y/2.0f));
+    GameObject redBox;
+    PlayerController controller(100, 1);
+    redBox.addScriptableBehaviour(controller);
+    SpriteRenderer r2(r1);
+    r2.setColor(sf::Color::Red);
+    redBox.addScriptableBehaviour(r2);
+    redBox.setOrigin(glm::vec2(0.5));
+    redBox.setPosition(glm::vec2(window.getSize().x / 2.0f - 205, window.getSize().y / 2.0f));
+    TextRenderer tr("Arial");
+    tr.setAlignment(TextAlignment::MIDDLE_RIGHT);
+    tr.setText("Hello, World!");
+    redBox.addScriptableBehaviour(tr);
 
-	while (window.isOpen()) {
-		sf::Time timeStep = deltaClock.restart();
-		sf::Event evt{};
-		while (window.pollEvent(evt)) {
-			if (evt.type == sf::Event::KeyPressed || evt.type == sf::Event::KeyReleased) {
-				Input::setKey(evt.key.code, evt.type);
-			}
+    /*Button button("Click me!", "Arial", "res/square.png", []() {
+        printf("I was clicked\n");
+    });*/
+    // button.setOrigin(glm::vec2(0.5, 0.5));
+    // button.setPosition(glm::vec2(window.getSize().x / 2.0, 100));
+    // button.setScale(glm::vec2(2, 0.5));
+    // button.setSize(glm::vec2(500, 100));
 
-			if (evt.type == sf::Event::MouseButtonPressed || evt.type == sf::Event::MouseButtonReleased) {
-				Input::setButton(evt.mouseButton.button, evt.type);
-			}
+    Scene gameScene("gameScene");
+    SceneManager sceneManager;
+    sceneManager.registerScene(gameScene);
+    sceneManager.stackScene(gameScene);
 
-			if (evt.type == sf::Event::MouseMoved) {
-				Input::updateMouse(evt.mouseMove.x, evt.mouseMove.y);
-			}
+    // OtherPlayerController otherController("buttonController", 10.0f);
+    FPSCounter fpsCounter("fpsCounter", 0.5f);
 
-			if (evt.type == sf::Event::Closed || (evt.type == sf::Event::KeyPressed && evt.key.code == sf::Keyboard::Key::Escape)) {
-				window.close();
-			}
-		}
-		
-		float fps = 1.0f / timeStep.asSeconds();
-		count ++;
-		averageFPS = averageFPS + (fps - averageFPS) / count;
-		if (count >= 60) count = 1;
-		if (fps < minFPS) minFPS = fps;
-		if (fps > maxFPS) maxFPS = fps;
-		fpsText.setString(string_format("AVG: %-10.2f\tMIN: %-10.2f\tMAX: %-10.2f", averageFPS, minFPS, maxFPS));
+    // button.addScriptableBehaviour(otherController);
+    fpsText.addScriptableBehaviour(fpsCounter);
 
-		sprite1.update(timeStep);
-		sprite2.update(timeStep);
-		sprite3.update(timeStep);
+    // gameScene.addChild(button);
+    gameScene.addChild(blueBox);
+    gameScene.addChild(redBox);
+    gameScene.addChild(fpsText);
 
-		Input::resetHitCounters();
+    while (window.isOpen()) {
+        sf::Time timeStep = deltaClock.restart();
+        sf::Event evt;
+        while (window.pollEvent(evt)) {
+            if (evt.type == sf::Event::KeyPressed || evt.type == sf::Event::KeyReleased) {
+                Input::setKey(evt.key.code, evt.type);
+            }
 
-		window.clear();
-		
-		sprite1.render(window);
-		sprite2.render(window);
-		sprite3.render(window);
-		
-		window.draw(fpsText);
-		window.display();
-	}
+            if (evt.type == sf::Event::MouseButtonPressed || evt.type == sf::Event::MouseButtonReleased) {
+                Input::setButton(evt.mouseButton.button, evt.type);
+            }
+
+            if (evt.type == sf::Event::MouseMoved) {
+                Input::updateMouse(evt.mouseMove.x, evt.mouseMove.y);
+            }
+
+            if (evt.type == sf::Event::Closed || (evt.type == sf::Event::KeyPressed && evt.key.code == sf::Keyboard::Key::Escape)) {
+                window.close();
+            }
+        }
+
+        sceneManager.update(timeStep);
+        Input::resetHitCounters();
+
+        window.clear();
+        sceneManager.render(window);
+        window.display();
+    }
 }
