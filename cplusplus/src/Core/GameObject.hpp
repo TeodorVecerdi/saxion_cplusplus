@@ -19,6 +19,8 @@ public:
     T* getScriptableBehaviour();
     template <behaviour_type T>
     std::vector<T*> getScriptableBehaviours();
+    template <behaviour_type T>
+    bool hasScriptableBehaviour();
     bool removeScriptableBehaviour(ScriptableBehaviour& behaviour);
     bool removeScriptableBehaviour(const std::string& identifier);
     void addChild(GameObject& gameObject);
@@ -67,4 +69,9 @@ std::vector<T*> GameObject::getScriptableBehaviours() {
         if (castBehaviour) values.push_back(castBehaviour);
     }
     return values;
+}
+
+template <behaviour_type T>
+bool GameObject::hasScriptableBehaviour() {
+    return getScriptableBehaviour<T>() != nullptr;
 }

@@ -10,6 +10,7 @@ public:
     glm::vec2 getSize() const;
     void setColor(sf::Color color);
     sf::Color getColor() const;
+    sf::FloatRect getGlobalBounds() const;
 protected:
     void onRender(sf::RenderWindow& window) const override;
     void onUpdate(sf::Time ts) override;

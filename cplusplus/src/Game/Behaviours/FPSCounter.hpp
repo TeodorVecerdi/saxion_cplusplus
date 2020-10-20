@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/ScriptableBehaviour.hpp"
+class TextRenderer;
 
 class FPSCounter final : public ScriptableBehaviour {
 public:
@@ -15,4 +16,5 @@ private:
     float minFPS;
     float maxFPS;
     float currentFPS;
+    TextRenderer* textRenderer;
 };

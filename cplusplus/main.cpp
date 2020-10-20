@@ -1,77 +1,87 @@
-#include "Core/FontCache.hpp"
-
 #include "Core.hpp"
 
 #include "Core/Input.hpp"
 #include "Core/Scene.hpp"
 #include "Core/SceneManager.hpp"
-#include "Game/Button.hpp"
-#include "Game/Label.hpp"
 
-#include "Game/Sprite.hpp"
 #include "Game/Behaviours/FPSCounter.hpp"
-#include "Game/Behaviours/OtherPlayerController.hpp"
 #include "Game/Behaviours/PlayerController.hpp"
 #include "Game/Behaviours/SpriteRenderer.hpp"
 #include "Game/Behaviours/TextRenderer.hpp"
+#include "Game/Behaviours/Button.hpp"
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(1280, 720), "Hello SFML");
     window.setVerticalSyncEnabled(true);
-    window.setView(sf::View(sf::FloatRect(0.0f, 0.0f, 1280, 720)));
     sf::Clock deltaClock;
 
-    // FPS
-    sf::Font font;
-    font.loadFromFile("res/arial.ttf");
-    FontCache::RegisterFont("Arial", font);
-
-    Label fpsText("", "Arial");
-    fpsText.setFontSize(20);
-    fpsText.setOrigin(glm::vec2(0, 0));
-    GameObject blueBox;
-    SpriteRenderer r1("res/square.png");
-    r1.setColor(sf::Color::Blue);
-    r1.setSize(glm::vec2(200));
-    blueBox.addScriptableBehaviour(r1);
-    blueBox.setOrigin(glm::vec2(0.5));
-    blueBox.setPosition(glm::vec2(window.getSize().x / 2.0f, window.getSize().y/2.0f));
-    GameObject redBox;
-    PlayerController controller(100, 1);
-    redBox.addScriptableBehaviour(controller);
-    SpriteRenderer r2(r1);
-    r2.setColor(sf::Color::Red);
-    redBox.addScriptableBehaviour(r2);
-    redBox.setOrigin(glm::vec2(0.5));
-    redBox.setPosition(glm::vec2(window.getSize().x / 2.0f - 205, window.getSize().y / 2.0f));
-    TextRenderer tr("Arial");
-    tr.setAlignment(TextAlignment::MIDDLE_RIGHT);
-    tr.setText("Hello, World!");
-    redBox.addScriptableBehaviour(tr);
-
-    /*Button button("Click me!", "Arial", "res/square.png", []() {
-        printf("I was clicked\n");
-    });*/
-    // button.setOrigin(glm::vec2(0.5, 0.5));
-    // button.setPosition(glm::vec2(window.getSize().x / 2.0, 100));
-    // button.setScale(glm::vec2(2, 0.5));
-    // button.setSize(glm::vec2(500, 100));
-
-    Scene gameScene("gameScene");
+    Scene gameScene("game");
+    Scene mainMenu("mainMenu");
     SceneManager sceneManager;
     sceneManager.registerScene(gameScene);
-    sceneManager.stackScene(gameScene);
+    sceneManager.registerScene(mainMenu);
+    sceneManager.stackScene(mainMenu);
 
-    // OtherPlayerController otherController("buttonController", 10.0f);
+
+    TextRenderer fpsText("Arial");
+    fpsText.setFontSize(16);
+    fpsText.setOutlineColor(sf::Color::Black);
     FPSCounter fpsCounter("fpsCounter", 0.5f);
+    GameObject fpsTextObject;
+    fpsTextObject.setPosition(glm::vec2(window.getSize().x / 2.0f, 20));
+    fpsTextObject.addScriptableBehaviour(fpsText);
+    fpsTextObject.addScriptableBehaviour(fpsCounter);
 
-    // button.addScriptableBehaviour(otherController);
-    fpsText.addScriptableBehaviour(fpsCounter);
+    
+    SpriteRenderer exitButtonSprite("res/square.png");
+    exitButtonSprite.setSize(glm::vec2(200, 50));
+    TextRenderer exitButtonLabel("Arial");
+    exitButtonLabel.setFontSize(30);
+    exitButtonLabel.setFillColor(sf::Color::Blue);
+    exitButtonLabel.setText("Exit game");
+    exitButtonLabel.setResizeReference(&exitButtonSprite);
+    Button exitButton(exitButtonSprite, [&window]() { window.close(); });
+    GameObject exitButtonObject;
+    exitButtonObject.setPosition(glm::vec2(window.getSize().x / 2.0f, 175));
+    exitButtonObject.addScriptableBehaviour(exitButtonSprite);
+    exitButtonObject.addScriptableBehaviour(exitButtonLabel);
+    exitButtonObject.addScriptableBehaviour(exitButton);
 
-    // gameScene.addChild(button);
-    gameScene.addChild(blueBox);
-    gameScene.addChild(redBox);
-    gameScene.addChild(fpsText);
+    SpriteRenderer playButtonSprite("res/square.png");
+    playButtonSprite.setSize(glm::vec2(200, 50));
+    TextRenderer playButtonLabel("Arial");
+    playButtonLabel.setFontSize(30);
+    playButtonLabel.setFillColor(sf::Color::Blue);
+    playButtonLabel.setText("Play game");
+    playButtonLabel.setResizeReference(&playButtonSprite);
+    Button playButton(playButtonSprite, [&sceneManager]() { sceneManager.stackScene("game"); });
+    GameObject playButtonObject;
+    playButtonObject.setPosition(glm::vec2(window.getSize().x/2.0f, 100));
+    playButtonObject.addScriptableBehaviour(playButtonSprite);
+    playButtonObject.addScriptableBehaviour(playButtonLabel);
+    playButtonObject.addScriptableBehaviour(playButton);
+
+    SpriteRenderer backButtonSprite("res/square.png");
+    backButtonSprite.setSize(glm::vec2(200, 50));
+    TextRenderer backButtonLabel("Arial");
+    backButtonLabel.setFontSize(30);
+    backButtonLabel.setFillColor(sf::Color::Blue);
+    backButtonLabel.setText("Back to menu");
+    backButtonLabel.setResizeReference(&backButtonSprite);
+    Button backButton(backButtonSprite, [&sceneManager]() { sceneManager.popScene(); });
+    GameObject backButtonObject;
+    backButtonObject.setPosition(glm::vec2(window.getSize().x / 2.0f, 100));
+    backButtonObject.addScriptableBehaviour(backButtonSprite);
+    backButtonObject.addScriptableBehaviour(backButtonLabel);
+    backButtonObject.addScriptableBehaviour(backButton);
+
+
+    mainMenu.addChild(playButtonObject);
+    mainMenu.addChild(exitButtonObject);
+    mainMenu.addChild(fpsTextObject);
+
+    gameScene.addChild(backButtonObject);
+    gameScene.addChild(fpsTextObject);
 
     while (window.isOpen()) {
         sf::Time timeStep = deltaClock.restart();

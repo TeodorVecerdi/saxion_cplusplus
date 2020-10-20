@@ -2,7 +2,7 @@
 
 #include "Core/GameObject.hpp"
 
-SpriteRenderer::SpriteRenderer(const std::string& texturePath) : SpriteRenderer(string_format("SpriteRenderer_%x", reinterpret_cast<void*>(this)), texturePath){}
+SpriteRenderer::SpriteRenderer(const std::string& texturePath) : SpriteRenderer(default_identifier(this), texturePath){}
 
 SpriteRenderer::SpriteRenderer(const std::string& identifier, const std::string& texturePath) :ScriptableBehaviour(identifier) {
     setTexture(texturePath);
@@ -29,6 +29,10 @@ void SpriteRenderer::setColor(const sf::Color color) {
 
 sf::Color SpriteRenderer::getColor() const {
     return sprite.getColor();
+}
+
+sf::FloatRect SpriteRenderer::getGlobalBounds() const {
+    return sprite.getGlobalBounds();
 }
 
 void SpriteRenderer::recalculateSizeMultiplier() {

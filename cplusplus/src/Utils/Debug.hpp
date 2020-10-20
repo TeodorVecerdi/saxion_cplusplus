@@ -5,6 +5,7 @@
 #ifdef NDEBUG
 #define assert(condition, message) 0
 #else
+#ifndef ASSERT
 #define ASSERT(condition, message)\
    (!(condition)) ?\
       (std::cerr << "Assertion failed: (" << #condition << "), "\
@@ -12,4 +13,5 @@
       << ", file " << __FILE__\
       << ", line " << __LINE__ << "."\
       << std::endl << message << std::endl, abort(), 0) : 1
+#endif
 #endif
