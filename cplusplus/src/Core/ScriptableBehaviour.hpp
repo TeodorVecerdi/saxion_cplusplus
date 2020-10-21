@@ -12,6 +12,7 @@ public:
 	virtual void render(sf::RenderWindow& window) const final;
 	std::string getIdentifier() const;
 	void setOwner(GameObject* newOwner);
+	void resetRanStart();
 protected:
 	virtual void onStart() { }
 	virtual void onRender(sf::RenderWindow& window) const {}

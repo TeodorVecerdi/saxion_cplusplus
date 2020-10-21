@@ -8,3 +8,8 @@ Scene::Scene(const std::string identifier) :GameObject(identifier) {
     transform.rotation = glm::vec3(0);
     transform.rebuildMatrix();
 }
+
+void Scene::resetStartTriggers() {
+    for (auto* child : this->children)
+        child->resetRanStart();
+}

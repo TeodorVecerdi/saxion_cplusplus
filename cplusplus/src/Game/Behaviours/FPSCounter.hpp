@@ -9,12 +9,9 @@ public:
 protected:
     void onStart() override;
     void onUpdate(sf::Time ts) override;
+    void onRender(sf::RenderWindow& window) const override;
 private:
+    float frameTime;
     float updateDelay;
     float updateDelayTimer;
-
-    float minFPS;
-    float maxFPS;
-    float currentFPS;
-    TextRenderer* textRenderer;
 };

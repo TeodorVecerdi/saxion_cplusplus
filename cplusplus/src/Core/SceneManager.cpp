@@ -3,13 +3,11 @@
 SceneManager::SceneManager() {}
 
 void SceneManager::update(const sf::Time ts) {
-    if (!sceneStack.empty())
-        sceneStack.top()->update(ts);
+    if (!sceneStack.empty()) sceneStack.top()->update(ts);
 }
 
 void SceneManager::render(sf::RenderWindow& renderWindow) const {
-    if (!sceneStack.empty())
-        sceneStack.top()->render(renderWindow);
+    if (!sceneStack.empty()) sceneStack.top()->render(renderWindow);
 }
 
 void SceneManager::registerScene(Scene& scene) {
@@ -19,7 +17,7 @@ void SceneManager::registerScene(Scene& scene) {
 }
 
 bool SceneManager::unregisterScene(const std::string& sceneIdentifier) {
-    if(!registeredScenes.contains(sceneIdentifier)) {
+    if (!registeredScenes.contains(sceneIdentifier)) {
         printf("SceneManager does not contain a registered scene with identifier [%s]\n", sceneIdentifier.c_str());
         return false;
     }
@@ -31,21 +29,23 @@ bool SceneManager::unregisterScene(Scene& scene) {
     return this->unregisterScene(scene.getIdentifier());
 }
 
-bool SceneManager::stackScene(const std::string& sceneIdentifier) {
+bool SceneManager::stackScene(const std::string& sceneIdentifier, bool resetStart) {
     if (!registeredScenes.contains(sceneIdentifier)) {
         printf("SceneManager does not contain a registered scene with identifier [%s]\n", sceneIdentifier.c_str());
         return false;
     }
+    if (resetStart)registeredScenes[sceneIdentifier]->resetStartTriggers();
     sceneStack.push(registeredScenes[sceneIdentifier]);
     return true;
 }
 
-bool SceneManager::stackScene(Scene& scene) {
+bool SceneManager::stackScene(Scene& scene, bool resetStart) {
     const auto id = scene.getIdentifier();
     if (!registeredScenes.contains(id)) {
         printf("SceneManager does not contain a registered scene with identifier [%s]\n", id.c_str());
         return false;
     }
+    if (resetStart)scene.resetStartTriggers();
     sceneStack.push(&scene);
     return true;
 }
@@ -55,4 +55,3 @@ Scene& SceneManager::popScene() {
     sceneStack.pop();
     return *top;
 }
-

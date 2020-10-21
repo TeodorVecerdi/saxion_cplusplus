@@ -9,6 +9,7 @@ public:
 	void onStart() override {}
 	void onUpdate(sf::Time ts) override {}
 	void onRender(sf::RenderWindow& renderWindow) const override {}
+	void resetStartTriggers();
 public: // Removed methods from GameObject as they don't really make sense in a 'Scene' object
 	void addScriptableBehaviour(ScriptableBehaviour& behaviour) = delete;
 	bool removeScriptableBehaviour(ScriptableBehaviour& behaviour) = delete;

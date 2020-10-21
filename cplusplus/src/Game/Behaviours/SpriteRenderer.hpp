@@ -3,8 +3,8 @@
 
 class SpriteRenderer final : public ScriptableBehaviour {
 public:
-    SpriteRenderer(const std::string& texturePath);
-    SpriteRenderer(const std::string& identifier, const std::string& texturePath);
+    SpriteRenderer(const std::string& texturePath, bool setSmooth = false);
+    SpriteRenderer(const std::string& identifier, const std::string& texturePath, bool setSmooth = false);
     void setTexture(const std::string& texturePath);
     void setSize(glm::vec2 size);
     glm::vec2 getSize() const;

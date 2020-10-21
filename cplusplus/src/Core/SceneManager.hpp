@@ -10,8 +10,8 @@ public:
     void registerScene(Scene& scene);
     bool unregisterScene(const std::string& sceneIdentifier);
     bool unregisterScene(Scene& scene);
-    bool stackScene(const std::string& sceneIdentifier);
-    bool stackScene(Scene& scene);
+    bool stackScene(const std::string& sceneIdentifier, bool resetStart);
+    bool stackScene(Scene& scene, bool resetStart);
     Scene& popScene();
 
     void update(sf::Time ts);

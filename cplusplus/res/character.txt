@@ -1,0 +1,12 @@
+# name
+Dude
+# characterType
+player
+# health
+5
+# vitality
+1
+# attack
+5
+# defense
+5

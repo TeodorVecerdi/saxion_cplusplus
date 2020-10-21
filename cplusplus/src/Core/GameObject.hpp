@@ -13,7 +13,8 @@ public:
     virtual void update(sf::Time ts) final;
     void render(sf::RenderWindow& window) const;
     std::string getIdentifier() const;
-public:
+    void resetRanStart();
+
     void addScriptableBehaviour(ScriptableBehaviour& behaviour);
     template <behaviour_type T>
     T* getScriptableBehaviour();
@@ -39,17 +40,21 @@ public: // TRANSFORM
     Transform2D getRenderTransform() const;
 protected:
     virtual void onStart() {}
+
     virtual void onRender(sf::RenderWindow& window) const {}
+
     virtual void onUpdate(const sf::Time ts) {}
+
     Transform2D transform;
     const std::string identifier;
     GameObject* parent = nullptr;
-private:
-    bool ranStart;
     std::map<std::string, ScriptableBehaviour*> scriptableBehaviourMap;
     std::vector<ScriptableBehaviour*> scriptableBehaviours;
     std::map<std::string, GameObject*> childrenMap;
     std::vector<GameObject*> children;
+
+private:
+    bool ranStart;
 };
 
 template <behaviour_type T>

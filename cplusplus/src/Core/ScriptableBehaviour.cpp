@@ -4,9 +4,9 @@ void ScriptableBehaviour::update(const sf::Time ts) {
 	if (owner == nullptr) return;
 
 	if (!ranStart) {
-		onStart();
-		ranStart = true;
-	}
+        ranStart = true;
+        onStart();
+    }
 	onUpdate(ts);
 }
 
@@ -17,6 +17,10 @@ void ScriptableBehaviour::render(sf::RenderWindow& window) const {
 
 std::string ScriptableBehaviour::getIdentifier() const { return identifier; }
 void ScriptableBehaviour::setOwner(GameObject* newOwner) { owner = newOwner; }
+
+void ScriptableBehaviour::resetRanStart() {
+	ranStart = false;
+}
 
 ScriptableBehaviour::ScriptableBehaviour() : ScriptableBehaviour(default_identifier(this)) {}
 

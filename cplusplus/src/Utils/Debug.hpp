@@ -3,7 +3,7 @@
 
 // Taken from: https://stackoverflow.com/a/56534748/5181524
 #ifdef NDEBUG
-#define assert(condition, message) 0
+#define ASSERT(condition, message) 0
 #else
 #ifndef ASSERT
 #define ASSERT(condition, message)\

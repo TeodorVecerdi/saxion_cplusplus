@@ -15,8 +15,9 @@ void Fonts::RegisterFont(const std::string& fontName, const std::string& fontPat
 }
 
 void Fonts::RegisterDefaultFonts() {
-    RegisterFont("Arial", "res/arial.ttf");
-    RegisterFont("Calibri", "res/calibri.ttf");
+    RegisterFont("Arial", "res/fonts/arial.ttf");
+    RegisterFont("Calibri", "res/fonts/calibri.ttf");
+    RegisterFont("Lato", "res/fonts/Lato-Regular.ttf");
 }
 
 Fonts::~Fonts() {

@@ -25,7 +25,7 @@ struct Transform2D {
 		localToWorld = t * r * s;
 	}
 
-	void setPRS(glm::mat4 trs) {
+	void setTRS(glm::mat4 trs) {
 		position = glm::vec3(trs[3][0], trs[3][1], trs[3][2]);
 		float scaleX = glm::length(glm::vec3(trs[0][0], trs[0][1], trs[0][2]));
 		float scaleY = glm::length(glm::vec3(trs[1][0], trs[1][1], trs[1][2]));

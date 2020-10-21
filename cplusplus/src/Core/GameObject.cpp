@@ -34,6 +34,14 @@ std::string GameObject::getIdentifier() const {
 	return this->identifier;
 }
 
+void GameObject::resetRanStart() {
+	ranStart = false;
+	for (auto* scriptableBehaviour : scriptableBehaviours)
+		scriptableBehaviour->resetRanStart();
+	for (auto* child : children)
+		child->resetRanStart();
+}
+
 void GameObject::addScriptableBehaviour(ScriptableBehaviour& behaviour) {
 	auto id = behaviour.getIdentifier();
 	ASSERT(!scriptableBehaviourMap.contains(id), "Cannot add a ScriptableBehaviour with identifier [" << id << "] when another one with the same identifier already exists.");
@@ -145,6 +153,6 @@ Transform2D GameObject::getRenderTransform() const {
 		currentParent = currentParent->parent;
 	}
 	Transform2D newTransform(glm::vec2(0), glm::vec2(0), transform.origin, glm::vec3(0));
-	newTransform.setPRS(current);
+	newTransform.setTRS(current);
 	return newTransform;
 }
