@@ -16,5 +16,9 @@ static std::string string_format(const std::string& format, Args ... args) {
 
 template<typename T>
 static std::string default_identifier(T* object) {
-    return string_format("%s_%x", typeid(T).name(), object);
+    auto typeName = std::string(typeid(T).name());
+    size_t start = typeName.find("class ");
+    if(start != std::string::npos)
+        typeName = typeName.replace(start, 6, "");
+    return string_format("%s_%x", typeName.c_str(), object);
 }

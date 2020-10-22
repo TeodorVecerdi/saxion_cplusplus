@@ -1,5 +1,7 @@
 ﻿#include "ScriptableBehaviour.hpp"
 
+#include "GameObject.hpp"
+
 void ScriptableBehaviour::update(const sf::Time ts) {
 	if (owner == nullptr) return;
 
@@ -22,6 +24,14 @@ void ScriptableBehaviour::resetRanStart() {
 	ranStart = false;
 }
 
+void ScriptableBehaviour::destroy() {
+	isDestroyed = true;
+}
+
 ScriptableBehaviour::ScriptableBehaviour() : ScriptableBehaviour(default_identifier(this)) {}
 
-ScriptableBehaviour::ScriptableBehaviour(const std::string identifier) : identifier(identifier), owner(nullptr) {}
+ScriptableBehaviour::ScriptableBehaviour(const std::string identifier) : identifier(identifier), owner(nullptr), ranStart(false) {}
+
+ScriptableBehaviour::~ScriptableBehaviour() {
+	printf("%*s dtor called on behaviour %s\n", GameObject::indent * 2, "", identifier.c_str());
+}

@@ -9,6 +9,22 @@ Scene::Scene(const std::string identifier) :GameObject(identifier) {
     transform.rebuildMatrix();
 }
 
+void Scene::onUpdate(sf::Time ts) {
+    for (auto* behaviour : scriptableBehaviours) {
+        if (!behaviour->isDestroyed) continue;
+
+        removeScriptableBehaviour(*behaviour);
+        delete behaviour;
+    }
+
+    for (auto* child : children) {
+        if(!child->isDestroyed) continue;
+
+        removeChild(*child);
+        delete child;
+    }
+}
+
 void Scene::resetStartTriggers() {
     for (auto* child : this->children)
         child->resetRanStart();

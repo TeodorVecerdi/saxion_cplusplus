@@ -1,7 +1,7 @@
 #include "CreateCharacterController.hpp"
 
-#include "SpriteRenderer.hpp"
-#include "TextRenderer.hpp"
+#include "Core/Behaviours/SpriteRenderer.hpp"
+#include "Core/Behaviours/TextRenderer.hpp"
 
 CreateCharacterController::CreateCharacterController(int maxPoints, SpriteRenderer* characterImage, TextRenderer* characterNameText, TextRenderer* characterTypeText,
                                                      TextRenderer* vitalityText, TextRenderer* damageText, TextRenderer* defenseText,

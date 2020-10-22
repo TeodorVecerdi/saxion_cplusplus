@@ -5,15 +5,40 @@ GameObject::GameObject() : GameObject(default_identifier(this)) {}
 GameObject::GameObject(const std::string identifier) : transform(Transform2D(glm::vec2(0, 0), glm::vec2(1, 1), glm::vec2(.5f, .5f), glm::vec3(0))), identifier(identifier), ranStart(false) {}
 GameObject::GameObject(const GameObject& other) : transform(other.transform), identifier(other.identifier), ranStart(false) {}
 
+GameObject::~GameObject() {
+	printf("%*s dtor called on object %s\n", GameObject::indent * 2, "", identifier.c_str());
+	if (parent != nullptr) parent->removeChild(getIdentifier());
+	while(!scriptableBehaviours.empty()) {
+		auto* behaviour = scriptableBehaviours.back();
+		scriptableBehaviourMap.erase(behaviour->getIdentifier());
+        scriptableBehaviours.pop_back();
+		indent++;
+		delete behaviour;
+		indent--;
+    }
+
+	while (!children.empty()) {
+		auto* child = children.back();
+		childrenMap.erase(child->getIdentifier());
+		children.pop_back();
+		indent++;
+		delete child;
+		indent--;
+	}
+}
+
 void GameObject::update(const sf::Time ts) {
+	if (isDestroyed) return;
 	if (!ranStart) {
 		ranStart = true;
 		onStart();
 	}
 	for (auto* behaviour : scriptableBehaviours) {
+		if (behaviour == nullptr || behaviour->isDestroyed) continue;
 		behaviour->update(ts);
 	}
 	for (auto* child : children) {
+		if (child == nullptr || child->isDestroyed) continue;
 		child->update(ts);
 	}
 
@@ -50,26 +75,26 @@ void GameObject::addScriptableBehaviour(ScriptableBehaviour& behaviour) {
 	scriptableBehaviours.push_back(&behaviour);
 }
 
-bool GameObject::removeScriptableBehaviour(ScriptableBehaviour& behaviour) {
+ScriptableBehaviour* GameObject::removeScriptableBehaviour(ScriptableBehaviour& behaviour) {
 	return this->removeScriptableBehaviour(behaviour.getIdentifier());
 }
 
-bool GameObject::removeScriptableBehaviour(const std::string& identifier) {
+ScriptableBehaviour* GameObject::removeScriptableBehaviour(const std::string& identifier) {
 	if (!scriptableBehaviourMap.contains(identifier)) {
 		printf("GameObject[%s] does not contain a scriptable behaviour with identifier [%s]", this->identifier.c_str(), identifier.c_str());
-		return false;
+		return nullptr;
 	}
 	auto* behaviour = scriptableBehaviourMap.at(identifier);
 	const auto it = std::find(scriptableBehaviours.begin(), scriptableBehaviours.end(), behaviour);
 	if(it == scriptableBehaviours.cend()) {
 		printf("Failed to find ScriptableBehaviour[%s] in behaviours list", identifier.c_str());
-		return false;
+		return nullptr;
 	}
 
 	behaviour->setOwner(nullptr);
 	scriptableBehaviourMap.erase(identifier);
 	scriptableBehaviours.erase(it);
-	return true;
+	return behaviour;
 }
 
 void GameObject::addChild(GameObject& gameObject) {
@@ -99,6 +124,16 @@ bool GameObject::removeChild(const std::string& identifier) {
 	childrenMap.erase(identifier);
 	children.erase(it);
 	return true;
+}
+
+void GameObject::destroy() {
+    for (auto* child : children) {
+        child->destroy();
+    }
+	for (auto* behaviour : scriptableBehaviours) {
+		behaviour->destroy();
+	}
+	isDestroyed = true;
 }
 
 void GameObject::setPosition(const glm::vec2 newPosition) {

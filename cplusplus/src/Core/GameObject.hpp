@@ -3,30 +3,33 @@
 #include "ScriptableBehaviour.hpp"
 #include "Transform2D.hpp"
 template <typename T> concept behaviour_type = std::is_base_of<ScriptableBehaviour, T>::value;
+template <typename T, typename ... Args> concept constructible =  std::is_constructible<T, Args...>::value;
 
 class GameObject {
 public:
     GameObject();
     GameObject(std::string identifier);
     GameObject(const GameObject& other);
-    virtual ~GameObject() = default;
+    virtual ~GameObject();
     virtual void update(sf::Time ts) final;
     void render(sf::RenderWindow& window) const;
     std::string getIdentifier() const;
-    void resetRanStart();
 
-    void addScriptableBehaviour(ScriptableBehaviour& behaviour);
+    template <behaviour_type T, typename ...Args> requires constructible<T, Args...>
+    T& addScriptableBehaviour(Args&& ...args);
     template <behaviour_type T>
     T* getScriptableBehaviour();
     template <behaviour_type T>
     std::vector<T*> getScriptableBehaviours();
     template <behaviour_type T>
     bool hasScriptableBehaviour();
-    bool removeScriptableBehaviour(ScriptableBehaviour& behaviour);
-    bool removeScriptableBehaviour(const std::string& identifier);
+    void addScriptableBehaviour(ScriptableBehaviour& behaviour);
+    ScriptableBehaviour* removeScriptableBehaviour(ScriptableBehaviour& behaviour);
+    ScriptableBehaviour* removeScriptableBehaviour(const std::string& identifier);
     void addChild(GameObject& gameObject);
     bool removeChild(GameObject& gameObject);
     bool removeChild(const std::string& identifier);
+    void destroy();
 public: // TRANSFORM
     void setPosition(glm::vec2 newPosition);
     void movePosition(glm::vec2 deltaPosition);
@@ -38,11 +41,10 @@ public: // TRANSFORM
     void setRotation(float newRotation);
     float getRotation() const;
     Transform2D getRenderTransform() const;
+    inline static int indent = 0;
 protected:
     virtual void onStart() {}
-
     virtual void onRender(sf::RenderWindow& window) const {}
-
     virtual void onUpdate(const sf::Time ts) {}
 
     Transform2D transform;
@@ -55,7 +57,18 @@ protected:
 
 private:
     bool ranStart;
+    bool isDestroyed;
+    void resetRanStart();
+    friend class Scene;
 };
+
+
+template <behaviour_type T, typename ... Args> requires constructible<T, Args...>
+T& GameObject::addScriptableBehaviour(Args&&... args) {
+    T* t = new T(std::forward<Args>(args)...);
+    addScriptableBehaviour(*t);
+    return *t;
+}
 
 template <behaviour_type T>
 T* GameObject::getScriptableBehaviour() {

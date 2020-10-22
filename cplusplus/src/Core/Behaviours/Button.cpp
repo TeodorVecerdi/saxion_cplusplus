@@ -17,7 +17,7 @@ Button::Button(const std::string& identifier, SpriteRenderer& sprite, std::funct
 }
 
 void Button::setSprite(SpriteRenderer* sprite) {
-    assert(sprite, "SpriteRenderer of Button[" << getIdentifier() << "] cannot be null");
+    ASSERT(sprite, "SpriteRenderer of Button[" << getIdentifier() << "] cannot be null");
     this->sprite = sprite;
 }
 
@@ -42,6 +42,6 @@ void Button::onUpdate(const sf::Time ts) {
         sprite->setColor(normalColor);
     }
     if (isHovering && Input::GetMouseButtonUp(0)) {
-        if (onClick != nullptr) onClick();
+        if (onClick) onClick();
     }
 }

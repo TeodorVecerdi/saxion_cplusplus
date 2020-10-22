@@ -147,9 +147,9 @@
   <ItemGroup>
     <ClCompile Include="src\Game\Behaviours\CreateCharacterController.cpp" />
     <ClCompile Include="src\Game\Character.cpp" />
-    <ClCompile Include="src\Game\Behaviours\Button.cpp" />
+    <ClCompile Include="src\Core\Behaviours\Button.cpp" />
     <ClCompile Include="src\Core\Fonts.cpp" />
-    <ClCompile Include="src\Game\Behaviours\SpriteRenderer.cpp" />
+    <ClCompile Include="src\Core\Behaviours\SpriteRenderer.cpp" />
     <ClCompile Include="src\Game\Behaviours\FPSCounter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Core\SceneManager.cpp" />
@@ -158,14 +158,15 @@
     <ClCompile Include="src\Game\Behaviours\PlayerController.cpp" />
     <ClCompile Include="src\Core\Scoreboard.cpp" />
     <ClCompile Include="src\Core\ScriptableBehaviour.cpp" />
-    <ClCompile Include="src\Game\Behaviours\TextRenderer.cpp" />
+    <ClCompile Include="src\Core\Behaviours\TextRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\GameObjectTemplates.hpp" />
     <ClInclude Include="src\Game\Behaviours\CreateCharacterController.hpp" />
     <ClInclude Include="src\Core\IO.hpp" />
     <ClInclude Include="src\Game\Character.hpp" />
-    <ClInclude Include="src\Game\Behaviours\Button.hpp" />
-    <ClInclude Include="src\Game\Behaviours\SpriteRenderer.hpp" />
+    <ClInclude Include="src\Core\Behaviours\Button.hpp" />
+    <ClInclude Include="src\Core\Behaviours\SpriteRenderer.hpp" />
     <ClInclude Include="src\Game\Behaviours\FPSCounter.hpp" />
     <ClInclude Include="src\Core.hpp" />
     <ClInclude Include="src\Core\Fonts.hpp" />
@@ -174,13 +175,14 @@
     <ClInclude Include="src\Core\Input.hpp" />
     <ClInclude Include="src\Game\Behaviours\PlayerController.hpp" />
     <ClInclude Include="src\Core\Transform2D.hpp" />
+    <ClInclude Include="src\Test.hpp" />
     <ClInclude Include="src\Utils\Debug.hpp" />
     <ClInclude Include="src\Core\GameObject.hpp" />
     <ClInclude Include="src\Score.hpp" />
     <ClInclude Include="src\Core\Scoreboard.hpp" />
     <ClInclude Include="src\Core\ScriptableBehaviour.hpp" />
     <ClInclude Include="src\Utils\StringUtils.hpp" />
-    <ClInclude Include="src\Game\Behaviours\TextRenderer.hpp" />
+    <ClInclude Include="src\Core\Behaviours\TextRenderer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\characters\adventurer\head_attack.png" />

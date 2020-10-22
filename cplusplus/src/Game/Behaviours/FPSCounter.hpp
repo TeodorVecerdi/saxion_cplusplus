@@ -4,6 +4,7 @@ class TextRenderer;
 
 class FPSCounter final : public ScriptableBehaviour {
 public:
+    FPSCounter(float updateDelay) : FPSCounter(default_identifier(this), updateDelay) {}
     FPSCounter(const std::string& identifier, float updateDelay) : ScriptableBehaviour(identifier), updateDelay(updateDelay) {}
 
 protected:
