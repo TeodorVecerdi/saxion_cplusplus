@@ -1,0 +1,14 @@
+#name
+Richard
+#characterType
+player
+#health
+10
+#vitality
+1
+#attack
+1
+#defense
+2
+#stamina
+2

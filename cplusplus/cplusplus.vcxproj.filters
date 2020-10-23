@@ -127,64 +127,58 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\square.png">
+    <Image Include="assets\textures\square.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\testTexture.png">
+    <Image Include="assets\textures\characters\female\head_attack.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\characters\adventurer\head_attack.png">
+    <Image Include="assets\textures\characters\female\head_hurt.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\characters\adventurer\head_hurt.png">
+    <Image Include="assets\textures\characters\female\head_idle.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\characters\adventurer\head_idle.png">
+    <Image Include="assets\textures\characters\player\head_attack.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\characters\female\head_attack.png">
+    <Image Include="assets\textures\characters\player\head_hurt.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\characters\female\head_hurt.png">
+    <Image Include="assets\textures\characters\player\head_idle.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\characters\female\head_idle.png">
+    <Image Include="assets\textures\characters\soldier\head_attack.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\characters\player\head_attack.png">
+    <Image Include="assets\textures\characters\soldier\head_hurt.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\characters\player\head_hurt.png">
+    <Image Include="assets\textures\characters\soldier\head_idle.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\characters\player\head_idle.png">
+    <Image Include="assets\textures\characters\zombie\head_attack.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\characters\soldier\head_attack.png">
+    <Image Include="assets\textures\characters\zombie\head_hurt.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\characters\soldier\head_hurt.png">
+    <Image Include="assets\textures\characters\zombie\head_idle.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\characters\soldier\head_idle.png">
+    <Image Include="assets\textures\characters\adventurer\head_attack.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\characters\zombie\head_attack.png">
+    <Image Include="assets\textures\characters\adventurer\head_hurt.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\characters\zombie\head_hurt.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\characters\zombie\head_idle.png">
+    <Image Include="assets\textures\characters\adventurer\head_idle.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Font Include="res\fonts\arial.ttf" />
-    <Font Include="res\fonts\calibri.ttf" />
-    <Font Include="res\fonts\Lato-Regular.ttf" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="res\character.txt" />
+    <Font Include="assets\fonts\arial.ttf" />
+    <Font Include="assets\fonts\calibri.ttf" />
+    <Font Include="assets\fonts\Lato-Regular.ttf" />
   </ItemGroup>
 </Project>

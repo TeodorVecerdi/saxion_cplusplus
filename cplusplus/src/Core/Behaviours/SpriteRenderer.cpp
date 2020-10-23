@@ -18,6 +18,12 @@ void SpriteRenderer::setTexture(const std::string& texturePath) {
     recalculateSizeMultiplier();
 }
 
+void SpriteRenderer::setTexture(const sf::Texture* texture) {
+    this->texture = *texture;
+    sprite.setTexture(*texture, true);
+    recalculateSizeMultiplier();
+}
+
 void SpriteRenderer::setSize(const glm::vec2 size) {
     this->size = size;
     recalculateSizeMultiplier();

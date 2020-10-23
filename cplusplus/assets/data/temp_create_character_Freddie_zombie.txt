@@ -1,0 +1,14 @@
+#name
+Freddie
+#characterType
+zombie
+#health
+30
+#vitality
+3
+#attack
+6
+#defense
+6
+#stamina
+1

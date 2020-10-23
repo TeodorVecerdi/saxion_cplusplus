@@ -1,0 +1,14 @@
+#name
+Steven
+#characterType
+player
+#health
+40
+#vitality
+4
+#attack
+2
+#defense
+4
+#stamina
+4
