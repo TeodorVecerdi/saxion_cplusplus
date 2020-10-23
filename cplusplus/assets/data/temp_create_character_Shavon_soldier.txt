@@ -1,0 +1,14 @@
+#name
+Shavon
+#characterType
+soldier
+#health
+20
+#vitality
+2
+#attack
+11
+#defense
+2
+#stamina
+1

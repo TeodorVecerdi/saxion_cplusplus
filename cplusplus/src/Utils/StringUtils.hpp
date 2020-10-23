@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <stdexcept>
@@ -21,4 +22,18 @@ static std::string default_identifier(T* object) {
     if(start != std::string::npos)
         typeName = typeName.replace(start, 6, "");
     return string_format("%s_%x", typeName.c_str(), object);
+}
+
+static std::string uppercase(std::string str) {
+    std::transform(str.begin(), str.end(), str.begin(), toupper);
+    return str;
+}
+
+static std::string lowercase(std::string str) {
+    std::transform(str.begin(), str.end(), str.begin(), tolower);
+    return str;
+}
+
+static std::string capitalize(std::string str) {
+    return string_format("%c%s", toupper(str[0]), str.substr(1));
 }

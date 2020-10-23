@@ -1,30 +1,34 @@
 ﻿#include "PlayerController.hpp"
-#include <SFML/Window/Keyboard.hpp>
 
-#include "Core/GameObject.hpp"
-#include "Core/Input.hpp"
 
-void PlayerController::onUpdate(const sf::Time ts) {
+#include "Core/Behaviours/SpriteRenderer.hpp"
+#include "Game/Character.hpp"
 
-    glm::vec2 movementVec(0, 0);
-    float rotation = 0;
+PlayerController::PlayerController(Character* character, SpriteRenderer& spriteRenderer) : PlayerController(default_identifier(this), character, spriteRenderer){}
 
-    if (Input::GetKey(sf::Keyboard::Key::W)) movementVec.y -= 1;
-    if (Input::GetKey(sf::Keyboard::Key::S)) movementVec.y += 1;
-    if (Input::GetKey(sf::Keyboard::Key::A)) movementVec.x -= 1;
-    if (Input::GetKey(sf::Keyboard::Key::D)) movementVec.x += 1;
+PlayerController::PlayerController(const std::string& identifier, Character* character, SpriteRenderer& spriteRenderer) : ScriptableBehaviour(identifier), character(character), spriteRenderer(spriteRenderer) {}
 
-    if (Input::GetKey(sf::Keyboard::Key::Q)) rotation += -1;
-    if (Input::GetKey(sf::Keyboard::Key::E)) rotation += 1;
-
-    if (Input::GetKeyDown(sf::Keyboard::Key::Z)) owner->removeChild("thirdSprite");
-    if (Input::GetKeyDown(sf::Keyboard::Key::X)) owner->removeChild("someOtherSprite");
-
-    owner->movePosition(movementVec * (speed * ts.asSeconds()));
-    owner->setRotation(owner->getRotation() + rotation * rotationSpeed);
+void PlayerController::setIdleState() {
+    spriteRenderer.setTexture(idleTexture.get());
 }
 
-PlayerController::PlayerController(float speed, float rotationSpeed) : PlayerController(default_identifier(this), speed, rotationSpeed) {}
+void PlayerController::setHurtState() {
+    spriteRenderer.setTexture(hurtTexture.get());
+}
 
-PlayerController::PlayerController(const std::string& identifier, const float speed, float rotationSpeed) : ScriptableBehaviour(identifier), speed(speed),
-                                                                                                            rotationSpeed(rotationSpeed) {}
+void PlayerController::setAttackState() {
+    spriteRenderer.setTexture(attackTexture.get());
+}
+
+void PlayerController::onUpdate(sf::Time ts) {}
+
+void PlayerController::onStart() {
+    idleTexture = std::make_unique<sf::Texture>();
+    idleTexture->loadFromFile(string_format("assets/textures/characters/%s/head_idle.png", character->getCharacterType().c_str()));
+    hurtTexture = std::make_unique<sf::Texture>();
+    hurtTexture->loadFromFile(string_format("assets/textures/characters/%s/head_hurt.png", character->getCharacterType().c_str()));
+    attackTexture = std::make_unique<sf::Texture>();
+    attackTexture->loadFromFile(string_format("assets/textures/characters/%s/head_attack.png", character->getCharacterType().c_str()));
+
+    setIdleState();
+}

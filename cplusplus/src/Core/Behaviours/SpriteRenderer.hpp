@@ -6,6 +6,7 @@ public:
     SpriteRenderer(const std::string& texturePath, bool setSmooth = false);
     SpriteRenderer(const std::string& identifier, const std::string& texturePath, bool setSmooth = false);
     void setTexture(const std::string& texturePath);
+    void setTexture(const sf::Texture* texture);
     void setSize(glm::vec2 size);
     glm::vec2 getSize() const;
     void setColor(sf::Color color);

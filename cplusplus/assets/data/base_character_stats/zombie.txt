@@ -1,0 +1,8 @@
+#vitality
+1
+#damage
+3
+#defense
+1
+#stamina
+1
