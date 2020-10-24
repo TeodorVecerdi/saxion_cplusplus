@@ -1,8 +1,8 @@
 ﻿#pragma once
-#include "GameObject.hpp"
-#include "Behaviours/Button.hpp"
-#include "Behaviours/SpriteRenderer.hpp"
-#include "Behaviours/TextRenderer.hpp"
+#include "Core/Scene/GameObject.hpp"
+#include "Core/Behaviours/Button.hpp"
+#include "Core/Behaviours/SpriteRenderer.hpp"
+#include "Core/Behaviours/TextRenderer.hpp"
 
 inline GameObject& MakeEmpty() {
     auto* object = new GameObject();

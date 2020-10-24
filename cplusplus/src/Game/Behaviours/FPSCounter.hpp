@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/ScriptableBehaviour.hpp"
+#include "Core/Scene/ScriptableBehaviour.hpp"
 class TextRenderer;
 
 class FPSCounter final : public ScriptableBehaviour {

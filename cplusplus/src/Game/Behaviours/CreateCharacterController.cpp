@@ -22,28 +22,28 @@ CreateCharacterController::CreateCharacterController(const std::string& identifi
 
 void CreateCharacterController::changeVitality(int amount) {
     if (remainingPoints == 0 && amount > 0) return;
-    vitalityPoints = std::max(vitalityPoints + amount, defaultStats[typesIndex].vitality);
+    vitalityPoints = std::max(vitalityPoints + amount, baseStats[typesIndex].vitality);
     vitalityText->setText(string_format("Vitality: %i", vitalityPoints));
     calculateRemainingPoints();
 }
 
 void CreateCharacterController::changeDamage(int amount) {
     if (remainingPoints == 0 && amount > 0) return;
-    damagePoints = std::max(damagePoints + amount, defaultStats[typesIndex].damage);
+    damagePoints = std::max(damagePoints + amount, baseStats[typesIndex].attack);
     damageText->setText(string_format("Damage: %i", damagePoints));
     calculateRemainingPoints();
 }
 
 void CreateCharacterController::changeDefense(int amount) {
     if (remainingPoints == 0 && amount > 0) return;
-    defensePoints = std::max(defensePoints + amount, defaultStats[typesIndex].defense);
+    defensePoints = std::max(defensePoints + amount, baseStats[typesIndex].defense);
     defenseText->setText(string_format("Defense: %i", defensePoints));
     calculateRemainingPoints();
 }
 
 void CreateCharacterController::changeStamina(int amount) {
     if (remainingPoints == 0 && amount > 0) return;
-    staminaPoints = std::max(staminaPoints + amount, defaultStats[typesIndex].stamina);
+    staminaPoints = std::max(staminaPoints + amount, baseStats[typesIndex].stamina);
     staminaText->setText(string_format("Stamina: %i", staminaPoints));
     calculateRemainingPoints();
 }
@@ -60,10 +60,10 @@ void CreateCharacterController::changeTypeIndex(int amount) {
 
     characterTypeText->setText(uppercase(types[typesIndex]));
 
-    vitalityPoints = defaultStats[typesIndex].vitality;
-    damagePoints = defaultStats[typesIndex].damage;
-    defensePoints = defaultStats[typesIndex].defense;
-    staminaPoints = defaultStats[typesIndex].stamina;
+    vitalityPoints = baseStats[typesIndex].vitality;
+    damagePoints = baseStats[typesIndex].attack;
+    defensePoints = baseStats[typesIndex].defense;
+    staminaPoints = baseStats[typesIndex].stamina;
     changeVitality(0); // hack to force UI to update
     changeDamage(0); // hack to force UI to update
     changeDefense(0); // hack to force UI to update
@@ -74,11 +74,10 @@ void CreateCharacterController::changeTypeIndex(int amount) {
 }
 
 void CreateCharacterController::exportCharacter() const {
-    auto fileName = string_format("assets/data/temp_create_character_%s_%s.txt", names[namesIndex].c_str(), types[typesIndex].c_str());
+    auto fileName = string_format("assets/temp/temp_create_character_%s_%s.txt", names[namesIndex].c_str(), types[typesIndex].c_str());
     if(IO::BeginWrite(fileName)) {
         IO::Write(names[namesIndex], "name");
         IO::Write(types[typesIndex], "characterType");
-        IO::Write(vitalityPoints*10, "health");
         IO::Write(vitalityPoints, "vitality");
         IO::Write(damagePoints, "attack");
         IO::Write(defensePoints, "defense");
@@ -88,12 +87,12 @@ void CreateCharacterController::exportCharacter() const {
 }
 
 std::string CreateCharacterController::getExportPath() const {
-    return string_format("assets/data/temp_create_character_%s_%s.txt", names[namesIndex].c_str(), types[typesIndex].c_str());
+    return string_format("assets/temp/temp_create_character_%s_%s.txt", names[namesIndex].c_str(), types[typesIndex].c_str());
 }
 
 void CreateCharacterController::calculateRemainingPoints() {
-    remainingPoints = maxPoints - vitalityPoints - damagePoints - defensePoints - staminaPoints + defaultStats[typesIndex].vitality + defaultStats[typesIndex].damage + defaultStats
-        [typesIndex].defense + defaultStats[typesIndex].stamina;
+    remainingPoints = maxPoints - vitalityPoints - damagePoints - defensePoints - staminaPoints + baseStats[typesIndex].vitality + baseStats[typesIndex].attack + baseStats
+        [typesIndex].defense + baseStats[typesIndex].stamina;
     remainingPointsText->setText(string_format("Remaining points: %i", remainingPoints));
 }
 
@@ -101,20 +100,20 @@ void CreateCharacterController::changeTypeImage() {
     characterImage->setTexture(string_format("assets/textures/characters/%s/head_idle.png", types[typesIndex].c_str()));
 }
 
-void CreateCharacterController::readDefaultStats() {
+void CreateCharacterController::loadBaseStats() {
     for (int i = 0; i < maxTypes; i++) {
         if (IO::BeginRead(string_format("assets/data/base_character_stats/%s.txt", types[i].c_str()))) {
-            IO::ReadInt(defaultStats[i].vitality);
-            IO::ReadInt(defaultStats[i].damage);
-            IO::ReadInt(defaultStats[i].defense);
-            IO::ReadInt(defaultStats[i].stamina);
+            IO::ReadInt(baseStats[i].vitality);
+            IO::ReadInt(baseStats[i].attack);
+            IO::ReadInt(baseStats[i].defense);
+            IO::ReadInt(baseStats[i].stamina);
             IO::EndRead();
         }
     }
 }
 
 void CreateCharacterController::onStart() {
-    readDefaultStats();
+    loadBaseStats();
     typesIndex = rand() % maxTypes;
     changeTypeIndex(0);
     randomizeName();

@@ -1,7 +1,7 @@
 #include "TextRenderer.hpp"
 
 #include "Core/Fonts.hpp"
-#include "Core/GameObject.hpp"
+#include "Core/Scene/GameObject.hpp"
 
 TextRenderer::TextRenderer(const std::string& fontName) : TextRenderer(default_identifier(this), fontName) {}
 

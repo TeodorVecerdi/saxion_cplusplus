@@ -1,5 +1,5 @@
 ﻿#include "FPSCounter.hpp"
-#include "Core/GameObject.hpp"
+#include "Core/Scene/GameObject.hpp"
 
 void FPSCounter::onStart() {
     updateDelayTimer = updateDelay;

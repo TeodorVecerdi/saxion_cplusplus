@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/ScriptableBehaviour.hpp"
+#include "Core/Scene/ScriptableBehaviour.hpp"
 
 class TextRenderer;
 class SpriteRenderer;
@@ -26,7 +26,7 @@ protected:
 private:
     void calculateRemainingPoints();
     void changeTypeImage();
-    void readDefaultStats();
+    void loadBaseStats();
 
     int remainingPoints;
     int maxPoints;
@@ -55,11 +55,11 @@ private:
         "Vicky", "Alice", "Yong", "Toya", "Machelle", "Jayne", "Zachariah", "Josie", "Steven", "Wilfredo"
     };
 
-    struct default_stats {
+    struct base_stats {
         int vitality;
-        int damage;
+        int attack;
         int defense;
         int stamina;
     };
-    inline static default_stats defaultStats[maxTypes] = {{},{},{},{},{}};
+    inline static base_stats baseStats[maxTypes] = {{},{},{},{},{}};
 };

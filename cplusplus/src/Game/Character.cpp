@@ -5,7 +5,7 @@
 #include "Core/IO.hpp"
 #include "Utils/StringUtils.hpp"
 
-Character::Character(const std::string& name, const std::string& characterType, int health, int vitality, int attack, int defense, int stamina) : health(health),
+Character::Character(const std::string& name, const std::string& characterType, int vitality, int attack, int defense, int stamina) : health(vitality * healthMultiplier),
     vitality(vitality), attack(attack), defense(defense), stamina(stamina), name(name), characterType(characterType) {}
 
 Character::Character(const std::string& fileName) {
@@ -63,11 +63,29 @@ int Character::getStamina() const {
     return stamina;
 }
 
+void Character::takeDamage(const int damage) {
+    const bool shouldAvoidAttack = rand() % defense < defense / 3;
+    if (shouldAvoidAttack) return;
+
+    int defensePower = defense + rand() % 5 - 2; // +/- 2
+    if (defensePower < 0) defensePower = 0; // don't take extra damage if you were unlucky
+    health -= (damage - defensePower);
+}
+
+void Character::heal() {
+    int healPower = stamina + rand() % 11 - 5; // +/- 5
+    if (healPower < 0) healPower = 1; // at least heal a bit if you were unlucky
+
+    const int maxHealth = vitality * healthMultiplier;
+    health += healPower;
+    if (health > maxHealth) health = maxHealth;
+
+}
+
 void Character::exportCharacter(const std::string& fileName) const {
     if (IO::BeginWrite(fileName)) {
         IO::Write(name, "name");
         IO::Write(characterType, "characterType");
-        IO::Write(health, "health");
         IO::Write(vitality, "vitality");
         IO::Write(attack, "attack");
         IO::Write(defense, "defense");
@@ -81,11 +99,11 @@ void Character::loadFromFile(const std::string& fileName) {
     if (IO::BeginRead(fileName)) {
         IO::ReadString(name);
         IO::ReadString(characterType);
-        IO::ReadInt(health);
         IO::ReadInt(vitality);
         IO::ReadInt(attack);
         IO::ReadInt(defense);
         IO::ReadInt(stamina);
+        health = vitality * healthMultiplier;
         IO::EndRead();
     } else {
         printf("Failed to load file %s. Check that the file exists.\n", fileName.c_str());
@@ -93,6 +111,7 @@ void Character::loadFromFile(const std::string& fileName) {
         name = default_identifier(this);
         characterType = "player";
         health = 0;
+        vitality = 0;
         attack = 0;
         defense = 0;
         stamina = 0;

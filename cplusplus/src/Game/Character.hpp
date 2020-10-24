@@ -4,7 +4,7 @@
 
 class Character {
 public:
-    Character(const std::string& name, const std::string& characterType, int health, int vitality, int attack, int defense, int stamina);
+    Character(const std::string& name, const std::string& characterType, int vitality, int attack, int defense, int stamina);
     Character(const std::string& fileName);
     Character() = default;
     void exportCharacter(const std::string& fileName) const;
@@ -22,6 +22,11 @@ public:
     int getAttack() const;
     int getDefense() const;
     int getStamina() const;
+
+    void takeDamage(int damage);
+    void heal();
+public:
+    static const int healthMultiplier = 5;
 private:
     int health;
     int vitality;
@@ -30,6 +35,7 @@ private:
     int stamina;
     std::string name;
     std::string characterType;
+
 
     /// <summary>
     /// Exponential Growth formula used by leveling system.

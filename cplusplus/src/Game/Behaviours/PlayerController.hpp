@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Core/ScriptableBehaviour.hpp"
+#include "Core/Scene/ScriptableBehaviour.hpp"
 
 class SpriteRenderer;
 class Character;
@@ -12,6 +12,8 @@ public:
     void setIdleState();
     void setHurtState();
     void setAttackState();
+    void enableControls();
+    Character* getPlayer();
 protected:
     void onUpdate(sf::Time ts) override;
     void onStart() override;

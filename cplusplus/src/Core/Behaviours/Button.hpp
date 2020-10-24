@@ -1,7 +1,7 @@
 #pragma once
 #include <functional>
 
-#include "Core/ScriptableBehaviour.hpp"
+#include "Core/Scene/ScriptableBehaviour.hpp"
 
 class TextRenderer;
 class SpriteRenderer;

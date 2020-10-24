@@ -1,13 +1,14 @@
 #pragma once
-#include "Core/ScriptableBehaviour.hpp"
+#include "Core/Scene/ScriptableBehaviour.hpp"
 
-class SpriteRenderer final : public ScriptableBehaviour {
+class SpriteRenderer : public ScriptableBehaviour {
 public:
     SpriteRenderer(const std::string& texturePath, bool setSmooth = false);
     SpriteRenderer(const std::string& identifier, const std::string& texturePath, bool setSmooth = false);
     void setTexture(const std::string& texturePath);
     void setTexture(const sf::Texture* texture);
-    void setSize(glm::vec2 size);
+    virtual void setSize(glm::vec2 size);
+    void setSmooth(bool smooth);
     glm::vec2 getSize() const;
     void setColor(sf::Color color);
     sf::Color getColor() const;
@@ -22,4 +23,5 @@ private:
     glm::vec2 textureSize;
     sf::Texture texture;
     sf::Sprite sprite;
+    bool smooth;
 };

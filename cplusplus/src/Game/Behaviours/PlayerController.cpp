@@ -20,6 +20,12 @@ void PlayerController::setAttackState() {
     spriteRenderer.setTexture(attackTexture.get());
 }
 
+void PlayerController::enableControls() {}
+
+Character* PlayerController::getPlayer() {
+    return character;
+}
+
 void PlayerController::onUpdate(sf::Time ts) {}
 
 void PlayerController::onStart() {

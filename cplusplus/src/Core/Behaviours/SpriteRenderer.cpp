@@ -1,10 +1,10 @@
 #include "SpriteRenderer.hpp"
 
-#include "Core/GameObject.hpp"
+#include "Core/Scene/GameObject.hpp"
 
 SpriteRenderer::SpriteRenderer(const std::string& texturePath, bool setSmooth) : SpriteRenderer(default_identifier(this), texturePath, setSmooth){}
 
-SpriteRenderer::SpriteRenderer(const std::string& identifier, const std::string& texturePath, bool setSmooth) :ScriptableBehaviour(identifier) {
+SpriteRenderer::SpriteRenderer(const std::string& identifier, const std::string& texturePath, bool setSmooth) :ScriptableBehaviour(identifier) , smooth(setSmooth){
     setTexture(texturePath);
     texture.setSmooth(setSmooth);
     sprite.setTexture(texture);
@@ -20,6 +20,7 @@ void SpriteRenderer::setTexture(const std::string& texturePath) {
 
 void SpriteRenderer::setTexture(const sf::Texture* texture) {
     this->texture = *texture;
+    this->texture.setSmooth(smooth);
     sprite.setTexture(*texture, true);
     recalculateSizeMultiplier();
 }
@@ -27,6 +28,11 @@ void SpriteRenderer::setTexture(const sf::Texture* texture) {
 void SpriteRenderer::setSize(const glm::vec2 size) {
     this->size = size;
     recalculateSizeMultiplier();
+}
+
+void SpriteRenderer::setSmooth(bool smooth) {
+    this->smooth = smooth;
+    texture.setSmooth(smooth);
 }
 
 glm::vec2 SpriteRenderer::getSize() const { return size; }
