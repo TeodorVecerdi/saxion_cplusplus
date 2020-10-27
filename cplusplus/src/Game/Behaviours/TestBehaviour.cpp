@@ -1,4 +1,4 @@
-﻿#include "TestBehaviour.h"
+﻿#include "TestBehaviour.hpp"
 
 #include "Core/Behaviours/SpriteRenderer.hpp"
 

@@ -16,6 +16,8 @@ void FilledSpriteRenderer::setSize(const glm::vec2 size) {
 }
 
 void FilledSpriteRenderer::setFillAmount(float fillAmount) {
+    if(fillAmount < 0) fillAmount = 0;
+    if(fillAmount > 1) fillAmount = 1;
     this->fillAmount = fillAmount;
     updateFilledSize();
 }

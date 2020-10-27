@@ -1,26 +1,27 @@
 ﻿#include "PlayerController.hpp"
 
 
+#include "Core/Behaviours/Button.hpp"
 #include "Core/Behaviours/SpriteRenderer.hpp"
 #include "Game/Character.hpp"
 
-PlayerController::PlayerController(Character* character, SpriteRenderer& spriteRenderer) : PlayerController(default_identifier(this), character, spriteRenderer){}
+PlayerController::PlayerController(Character* character, Button& attackButton, Button& healButton, Button& focusButton) : PlayerController(default_identifier(this), character, attackButton, healButton, focusButton){}
 
-PlayerController::PlayerController(const std::string& identifier, Character* character, SpriteRenderer& spriteRenderer) : ScriptableBehaviour(identifier), character(character), spriteRenderer(spriteRenderer) {}
-
-void PlayerController::setIdleState() {
-    spriteRenderer.setTexture(idleTexture.get());
+PlayerController::PlayerController(const std::string& identifier, Character* character, Button& attackButton, Button& healButton, Button& focusButton) :
+    ScriptableBehaviour(identifier), character(character), attackButton(attackButton), healButton(healButton), focusButton(focusButton) {
 }
 
-void PlayerController::setHurtState() {
-    spriteRenderer.setTexture(hurtTexture.get());
+void PlayerController::enableControls() {
+    attackButton.setEnabled(true);
+    healButton.setEnabled(true);
+    focusButton.setEnabled(true);
 }
 
-void PlayerController::setAttackState() {
-    spriteRenderer.setTexture(attackTexture.get());
+void PlayerController::disableControls() {
+    attackButton.setEnabled(false);
+    healButton.setEnabled(false);
+    focusButton.setEnabled(false);
 }
-
-void PlayerController::enableControls() {}
 
 Character* PlayerController::getPlayer() {
     return character;
@@ -28,13 +29,4 @@ Character* PlayerController::getPlayer() {
 
 void PlayerController::onUpdate(sf::Time ts) {}
 
-void PlayerController::onStart() {
-    idleTexture = std::make_unique<sf::Texture>();
-    idleTexture->loadFromFile(string_format("assets/textures/characters/%s/head_idle.png", character->getCharacterType().c_str()));
-    hurtTexture = std::make_unique<sf::Texture>();
-    hurtTexture->loadFromFile(string_format("assets/textures/characters/%s/head_hurt.png", character->getCharacterType().c_str()));
-    attackTexture = std::make_unique<sf::Texture>();
-    attackTexture->loadFromFile(string_format("assets/textures/characters/%s/head_attack.png", character->getCharacterType().c_str()));
-
-    setIdleState();
-}
+void PlayerController::onStart() {}

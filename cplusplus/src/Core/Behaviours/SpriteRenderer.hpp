@@ -1,12 +1,13 @@
 #pragma once
+#include "Core/Drawing/SliceSprite.hpp"
 #include "Core/Scene/ScriptableBehaviour.hpp"
 
 class SpriteRenderer : public ScriptableBehaviour {
 public:
     SpriteRenderer(const std::string& texturePath, bool setSmooth = false);
     SpriteRenderer(const std::string& identifier, const std::string& texturePath, bool setSmooth = false);
-    void setTexture(const std::string& texturePath);
-    void setTexture(const sf::Texture* texture);
+    void setTexture(const std::string& texturePath, uint32_t spliceBorder = 8);
+    void setTexture(const sf::Texture* texture, uint32_t spliceBorder = 8);
     virtual void setSize(glm::vec2 size);
     void setSmooth(bool smooth);
     glm::vec2 getSize() const;

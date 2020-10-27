@@ -8,15 +8,16 @@ public:
     sf::Font& GetFont(const std::string& fontName);
     void RegisterFont(const std::string& fontName, const std::string& fontPath);
     static Fonts* getInstance() {
-        if(!instance) {
-            instance = new Fonts();
-        }
-        return instance;
+        static Fonts instance;
+        return &instance;
     }
 private:
     ~Fonts();
     Fonts();
+    Fonts(const Fonts&) = delete;
+    Fonts& operator=(const Fonts&) = delete;
+    
     void RegisterDefaultFonts();
     std::map<std::string, sf::Font*> fonts;
-    inline static Fonts* instance = nullptr;
+    static Fonts* instance;
 };

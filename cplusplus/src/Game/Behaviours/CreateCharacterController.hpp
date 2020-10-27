@@ -6,10 +6,10 @@ class SpriteRenderer;
 
 class CreateCharacterController final : public ScriptableBehaviour {
 public:
-    CreateCharacterController(int maxPoints, SpriteRenderer* characterImage, TextRenderer* characterNameText, TextRenderer* characterTypeText, TextRenderer* vitalityText,
+    CreateCharacterController(SpriteRenderer* characterImage, TextRenderer* characterNameText, TextRenderer* characterTypeText, TextRenderer* vitalityText,
                               TextRenderer* damageText, TextRenderer* defenseText, TextRenderer* staminaText, TextRenderer* remainingPointsText);
 
-    CreateCharacterController(const std::string& identifier, int maxPoints, SpriteRenderer* characterImage, TextRenderer* characterNameText, TextRenderer* characterTypeText,
+    CreateCharacterController(const std::string& identifier, SpriteRenderer* characterImage, TextRenderer* characterNameText, TextRenderer* characterTypeText,
                               TextRenderer* vitalityText, TextRenderer* damageText, TextRenderer* defenseText, TextRenderer* staminaText, TextRenderer* remainingPointsText);
 
     void changeVitality(int amount);

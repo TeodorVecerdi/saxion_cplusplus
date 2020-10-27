@@ -14,14 +14,12 @@ public:
     void setSprite(SpriteRenderer* sprite);
     void setLabel(TextRenderer* label);
     void setOnClick(std::function<void()> onClick);
-
-    sf::Color normalColor = sf::Color(255, 255, 255);
-    sf::Color hoverColor = sf::Color(227, 227, 227);
-    sf::Color activeColor = sf::Color(200, 200, 200);
+    void setEnabled(bool enabled);
 protected:
     void onUpdate(sf::Time ts) override;
 private:
     std::function<void()> onClick;
     SpriteRenderer* sprite;
     TextRenderer* label;
+    bool enabled;
 };

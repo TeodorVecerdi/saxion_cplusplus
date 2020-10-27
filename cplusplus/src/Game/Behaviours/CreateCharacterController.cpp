@@ -3,15 +3,16 @@
 #include "Core/IO.hpp"
 #include "Core/Behaviours/SpriteRenderer.hpp"
 #include "Core/Behaviours/TextRenderer.hpp"
+#include "Game/State/Difficulty.hpp"
 
-CreateCharacterController::CreateCharacterController(int maxPoints, SpriteRenderer* characterImage, TextRenderer* characterNameText, TextRenderer* characterTypeText,
+CreateCharacterController::CreateCharacterController(SpriteRenderer* characterImage, TextRenderer* characterNameText, TextRenderer* characterTypeText,
                                                      TextRenderer* vitalityText, TextRenderer* damageText, TextRenderer* defenseText, TextRenderer* staminaText,
-                                                     TextRenderer* remainingPointsText) : maxPoints(maxPoints), characterImage(characterImage),
+                                                     TextRenderer* remainingPointsText) : characterImage(characterImage),
                                                                                           characterNameText(characterNameText), characterTypeText(characterTypeText),
                                                                                           remainingPointsText(remainingPointsText), vitalityText(vitalityText),
                                                                                           damageText(damageText), defenseText(defenseText), staminaText(staminaText) {}
 
-CreateCharacterController::CreateCharacterController(const std::string& identifier, int maxPoints, SpriteRenderer* characterImage, TextRenderer* characterNameText,
+CreateCharacterController::CreateCharacterController(const std::string& identifier, SpriteRenderer* characterImage, TextRenderer* characterNameText,
                                                      TextRenderer* characterTypeText, TextRenderer* vitalityText, TextRenderer* damageText, TextRenderer* defenseText,
                                                      TextRenderer* staminaText, TextRenderer* remainingPointsText): ScriptableBehaviour(identifier), characterImage(characterImage),
                                                                                                                     characterNameText(characterNameText),
@@ -113,6 +114,7 @@ void CreateCharacterController::loadBaseStats() {
 }
 
 void CreateCharacterController::onStart() {
+    maxPoints = Difficulty::GetDifficulty().PlayerBaseAttrPoints;
     loadBaseStats();
     typesIndex = rand() % maxTypes;
     changeTypeIndex(0);

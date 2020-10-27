@@ -1,0 +1,18 @@
+#############  ENEMY
+# base enemy attribute points
+8
+# attack chance (%)
+60
+# heal chance (%)
+32
+# do nothing chance (%)
+8
+# evade attack chance (%) - do 'defensePoints' tries to achieve the evade attack. So if dP = 3, it will try 3 times to achieve the percentage
+10
+#############  PLAYER
+# base attribute points
+5
+# focus success chance (%)
+20
+# evade attack chance (%) - do 'defensePoints' tries to achieve the evade attack. So if dP = 3, it will try 3 times to achieve the percentage
+5

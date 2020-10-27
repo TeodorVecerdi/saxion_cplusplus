@@ -1,12 +1,12 @@
 #name
-Tyrell
+Rhett
 #characterType
-zombie
+soldier
 #vitality
-1
+6
 #attack
 3
 #defense
-1
+3
 #stamina
 1

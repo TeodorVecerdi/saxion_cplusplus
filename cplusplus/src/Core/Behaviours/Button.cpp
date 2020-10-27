@@ -1,12 +1,9 @@
 #include "Button.hpp"
 #include "SpriteRenderer.hpp"
 #include "Core/Input.hpp"
+#include "Core/Drawing/Theme.hpp"
 
-Button::Button(SpriteRenderer& sprite) : ScriptableBehaviour(default_identifier(this)) {
-    setSprite(&sprite);
-    label = nullptr;
-    this->onClick = nullptr;
-}
+Button::Button(SpriteRenderer& sprite) : Button(default_identifier(this), sprite, nullptr)  {}
 
 Button::Button(SpriteRenderer& sprite, std::function<void()> onClick) : Button(default_identifier(this), sprite, onClick) {}
 
@@ -14,6 +11,7 @@ Button::Button(const std::string& identifier, SpriteRenderer& sprite, std::funct
     setSprite(&sprite);
     label = nullptr;
     this->onClick = onClick;
+    enabled = true;
 }
 
 void Button::setSprite(SpriteRenderer* sprite) {
@@ -29,17 +27,26 @@ void Button::setOnClick(const std::function<void()> onClick) {
     this->onClick = onClick;
 }
 
+void Button::setEnabled(bool enabled) {
+    this->enabled = enabled;
+}
+
 void Button::onUpdate(const sf::Time ts) {
+    auto* activeTheme = Theme::activeTheme;
+
+    if(!enabled) {
+        sprite->setColor(activeTheme->buttonDisabled);
+        return;
+    }
+
     const auto spriteRect = sprite->getGlobalBounds();
-
     const bool isHovering = spriteRect.contains(Input::mouseX, Input::mouseY);
-
     if (isHovering && Input::GetMouseButton(0)) {
-        sprite->setColor(activeColor);
+        sprite->setColor(activeTheme->buttonActive);
     } else if (isHovering) {
-        sprite->setColor(hoverColor);
+        sprite->setColor(activeTheme->buttonHover);
     } else {
-        sprite->setColor(normalColor);
+        sprite->setColor(activeTheme->buttonNormal);
     }
     if (isHovering && Input::GetMouseButtonUp(0)) {
         if (onClick) onClick();
