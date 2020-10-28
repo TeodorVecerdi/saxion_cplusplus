@@ -36,6 +36,10 @@ sf::Color TextRenderer::getOutlineColor() const { return text.getOutlineColor();
 
 uint32_t TextRenderer::getFontSize() const { return text.getCharacterSize(); }
 
+sf::FloatRect TextRenderer::getGlobalBounds() const {
+    return text.getGlobalBounds();
+}
+
 void TextRenderer::onRender(sf::RenderWindow& window) const {
     window.draw(text);
 }

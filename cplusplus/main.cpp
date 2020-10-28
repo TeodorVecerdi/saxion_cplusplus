@@ -1,35 +1,38 @@
-#include <filesystem>
 #include "Core.hpp"
 #include "Core/Input.hpp"
 #include "Core/IO.hpp"
-
-#include "Core/Scene/Scene.hpp"
-#include "Core/Scene/SceneManager.hpp"
-#include "Core/Scene/GameObjectTemplates.hpp"
 
 #include "Core/Behaviours/SpriteRenderer.hpp"
 #include "Core/Behaviours/TextRenderer.hpp"
 #include "Core/Behaviours/Button.hpp"
 #include "Core/Behaviours/FilledSpriteRenderer.hpp"
 #include "Core/Drawing/Theme.hpp"
+#include "Core/Scene/Scene.hpp"
+#include "Core/Scene/SceneManager.hpp"
+#include "Core/Scene/GameObjectTemplates.hpp"
 
+#include "Game/Character.hpp"
 #include "Game/Behaviours/FPSCounter.hpp"
 #include "Game/Behaviours/CreateCharacterController.hpp"
 #include "Game/Behaviours/PlayerController.hpp"
-#include "Game/Character.hpp"
 #include "Game/Behaviours/CharacterVisualizer.hpp"
+#include "Game/Behaviours/ContinueGame.hpp"
 #include "Game/Behaviours/GameController.hpp"
 #include "Game/Behaviours/InfoArea.hpp"
-#include "Game/Behaviours/TestBehaviour.hpp"
 #include "Game/State/Difficulty.hpp"
 
-int main() {
+#define GET_ARGi(idx,default) idx < argc ? std::stoi(argv[idx]) : default
+#define GET_ARGs(idx,default) idx < argc ? argv[idx] : default
+
+int main(int argc, char* argv[]) {
+	uint32_t width = GET_ARGi(1, 1600), height = GET_ARGi(2, 900);
+
 	// Clean temp folder
 	std::filesystem::path temp("assets/temp");
 	std::filesystem::remove_all(temp);
 	std::filesystem::create_directory(temp);
 
-	sf::RenderWindow window(sf::VideoMode(1600, 900), "Hello SFML", sf::Style::Close);
+	sf::RenderWindow window(sf::VideoMode(width, height), "Hello SFML", sf::Style::Close);
 	window.setVerticalSyncEnabled(false);
 	sf::Clock deltaClock;
 	srand(static_cast<uint32_t>(time(nullptr)));
@@ -49,7 +52,7 @@ int main() {
 	createCharacterScene.addScriptableBehaviour<FPSCounter>(0.5f);
 	difficultyMenu.addScriptableBehaviour<FPSCounter>(0.5f);
 	gameScene.addScriptableBehaviour<FPSCounter>(0.5f);
-	
+
 	auto* player = new Character();
 	player->setIsPlayer(true);
 
@@ -84,26 +87,46 @@ int main() {
 	float UIPadding = 10;
 
 #pragma region Main Menu Scene
-	auto [createCharacterButtonObject, cCSprite, cCLabel, cCButton] = DeconstructButton(MakeButton(
+	auto [playGame, playGameSprite, playGameLabel, playGameButton] = DeconstructButton(MakeButton(
 		"assets/textures/square.png", glm::vec2(200, 40), "Lato", "Play", 24,
 		TextAlignment::CENTER, Theme::activeTheme->secondaryText));
-	createCharacterButtonObject.setPosition(glm::vec2(window.getSize().x / 2.0f, window.getSize().y / 2.0f - 25));
-	cCButton.setOnClick([&sceneManager]() { sceneManager.stackScene("difficultyMenu", true); });
+	playGame.setPosition(glm::vec2(window.getSize().x / 2.0f, window.getSize().y / 2.0f - 40 - 20 - 1.5f * UIPadding));
+	playGameButton.setOnClick([&sceneManager]() {
+		sceneManager.popScene();
+		sceneManager.stackScene("difficultyMenu", true);
+	});
+
+	auto [continueGame, continueGameSprite, continueGameLabel, continueGameButton] = DeconstructButton(MakeButton(
+		"assets/textures/square.png", glm::vec2(200, 40), "Lato", "Continue", 24,
+		TextAlignment::CENTER, Theme::activeTheme->secondaryText));
+	continueGame.setPosition(glm::vec2(window.getSize().x / 2.0f, window.getSize().y / 2.0f - 20 - 0.5f * UIPadding));
+
+	auto [eraseData, eraseDataSprite, eraseDataLabel, eraseDataButton] = DeconstructButton(MakeButton(
+		"assets/textures/square.png", glm::vec2(200, 40), "Lato", "Erase Data", 24,
+		TextAlignment::CENTER, Theme::activeTheme->secondaryText));
+	eraseData.setPosition(glm::vec2(window.getSize().x / 2.0f, window.getSize().y / 2.0f + 20 + 0.5f * UIPadding));
+
+	auto& continueGameController = continueGame.addScriptableBehaviour<ContinueGame>(
+		continueGameButton, eraseDataButton);
+	continueGameButton.setOnClick([&sceneManager, &continueGameController]() {
+		sceneManager.popScene();
+		sceneManager.stackScene("game", true);
+		continueGameController.continueGame();
+	});
+	eraseDataButton.setOnClick([&continueGameController]() {
+		continueGameController.eraseData();
+	});
 
 	auto [exitButtonObject, exitSprite, exitLabel, exitButton] = DeconstructButton(MakeButton(
 		"assets/textures/square.png", glm::vec2(200, 40), "Lato", "Exit", 24,
 		TextAlignment::CENTER, Theme::activeTheme->secondaryText));
-	exitButtonObject.setPosition(glm::vec2(window.getSize().x / 2.0f, window.getSize().y / 2.0f + 25));
+	exitButtonObject.setPosition(
+		glm::vec2(window.getSize().x / 2.0f, window.getSize().y / 2.0f + 40 + 20 + 1.5f * UIPadding));
 	exitButton.setOnClick([&window]() { window.close(); });
 
-	auto [fillTest, fillSprite] = DeconstructSprite(MakeSprite("assets/textures/square.png", glm::vec2(200, 50)));
-	fillTest.setPosition(glm::vec2(window.getSize().x / 2.0f, 65));
-	fillTest.setOrigin(glm::vec2(0, 0.5f));
-	fillTest.addScriptableBehaviour<TestBehaviour>(fillSprite);
-	fillSprite.setColor(Theme::activeTheme->themeColor1);
-
-	mainMenu.addChild(fillTest);
-	mainMenu.addChild(createCharacterButtonObject);
+	mainMenu.addChild(playGame);
+	mainMenu.addChild(continueGame);
+	mainMenu.addChild(eraseData);
 	mainMenu.addChild(exitButtonObject);
 #pragma endregion
 #pragma region Difficulty Selection
@@ -118,6 +141,7 @@ int main() {
 	easy.setPosition(glm::vec2(0, -40 - UIPadding));
 	easyButton.setOnClick([&sceneManager]() {
 		Difficulty::SetActiveDifficulty(0);
+		sceneManager.popScene(); // difficulty
 		sceneManager.stackScene("createCharacter", true);
 	});
 	auto [normal, normalSprite, normalLabel, normalButton] = DeconstructButton(MakeButton(
@@ -125,6 +149,7 @@ int main() {
 		Theme::activeTheme->secondaryText));
 	normalButton.setOnClick([&sceneManager]() {
 		Difficulty::SetActiveDifficulty(1);
+		sceneManager.popScene(); // difficulty
 		sceneManager.stackScene("createCharacter", true);
 	});
 	auto [hard, hardSprite, hardLabel, hardButton] = DeconstructButton(MakeButton(
@@ -133,6 +158,7 @@ int main() {
 	hard.setPosition(glm::vec2(0, 40 + UIPadding));
 	hardButton.setOnClick([&sceneManager]() {
 		Difficulty::SetActiveDifficulty(2);
+		sceneManager.popScene(); // difficulty
 		sceneManager.stackScene("createCharacter", true);
 	});
 	auto [difficultyMenuBack, difficultyMenuBackSprite, difficultyMenuBackLabel, difficultyMenuBackButton] =
@@ -142,6 +168,7 @@ int main() {
 	difficultyMenuBack.setPosition(glm::vec2(0, 80 + 1.5f * UIPadding));
 	difficultyMenuBackButton.setOnClick([&sceneManager]() {
 		sceneManager.popScene();
+		sceneManager.stackScene("mainMenu", false);
 	});
 
 	difficultyContainer.addChild(difficultyTitle);
@@ -163,7 +190,7 @@ int main() {
 	createCharacterObject.setOrigin(glm::vec2(0));
 
 	auto [createCharTitleObject, cCTLabel] = DeconstructLabel(
-		MakeLabel("Lato", "Play", 48, TextAlignment::CENTER, Theme::activeTheme->primaryText));
+		MakeLabel("Lato", "Create Character", 48, TextAlignment::CENTER, Theme::activeTheme->primaryText));
 	createCharTitleObject.setPosition(glm::vec2(col1.left + windowSize.x / 2.0f, headerHeight / 2.0f));
 	createCharacterObject.addChild(createCharTitleObject);
 
@@ -276,6 +303,11 @@ int main() {
 	staminaDecreaseObject.setPosition(glm::vec2(col2.width - 48 - 3.0f * UIPadding,
 	                                            4.0f * lineHeight32 + 4.5f * UIPadding));
 
+	auto [randomizeStats, randomizeStatsSprite, randomizeStatsLabel, randomizeStatsButton] = DeconstructButton(
+		MakeButton("assets/textures/square.png", glm::vec2(col2.width - 4 * UIPadding, 32), "Lato", "Randomize stats", 24, TextAlignment::CENTER, Theme::activeTheme->secondaryText)
+	);
+	randomizeStats.setPosition(glm::vec2(col2.width / 2.0f, 5.0f * lineHeight32 + 5.0f * UIPadding));
+	
 	auto& col2Object = MakeEmpty();
 	col2Object.setOrigin(glm::vec2(0));
 	col2Object.setPosition(glm::vec2(col2.left, col2.top));
@@ -292,6 +324,7 @@ int main() {
 	col2Object.addChild(staminaPointsObject);
 	col2Object.addChild(staminaIncreaseObject);
 	col2Object.addChild(staminaDecreaseObject);
+	col2Object.addChild(randomizeStats);
 
 	createCharacterObject.addChild(col2Object);
 
@@ -321,11 +354,11 @@ int main() {
 		createCharacterController.exportCharacter();
 		player->loadFromFile(createCharacterController.getExportPath());
 		sceneManager.popScene(); // pop character creation
-		sceneManager.popScene(); // pop difficulty
 		sceneManager.stackScene("game", false);
 	});
 	bCCButton.setOnClick([&sceneManager]() {
 		sceneManager.popScene();
+		sceneManager.stackScene("mainMenu", false);
 	});
 	rNButton.setOnClick([&createCharacterController]() {
 		createCharacterController.randomizeName();
@@ -343,12 +376,11 @@ int main() {
 		createCharacterController.changeVitality(1);
 	});
 	dmgDButton.setOnClick([&createCharacterController]() {
-		createCharacterController.changeDamage(-1);
+		createCharacterController.changeAttack(-1);
 	});
 	dmgIButton.setOnClick([&createCharacterController]() {
-		createCharacterController.changeDamage(1);
+		createCharacterController.changeAttack(1);
 	});
-
 	dfDButton.setOnClick([&createCharacterController]() {
 		createCharacterController.changeDefense(-1);
 	});
@@ -361,11 +393,12 @@ int main() {
 	stIButton.setOnClick([&createCharacterController]() {
 		createCharacterController.changeStamina(1);
 	});
-
+	randomizeStatsButton.setOnClick([&createCharacterController] () {
+		createCharacterController.randomizeStats();
+	});
 	createCharacterScene.addChild(createCharacterObject);
 
 #pragma endregion
-
 #pragma region Game Scene
 	auto& gameContainer = MakeEmpty();
 
@@ -515,14 +548,27 @@ int main() {
 
 	auto [infoArea, infoAreaSprite] = DeconstructSprite(MakeSprite("assets/textures/square.png",
 	                                                               glm::vec2(characterContainerSize.x,
-	                                                                         characterContainerSize.y - 1.5f * UIPadding
-	                                                                         - 32.0f)));
+	                                                                         characterContainerSize.y)));
 	infoArea.setPosition(glm::vec2(characterContainerSize.x / 2.0f + 4.0f * UIPadding,
-	                               windowSize.y / 2.0f + characterContainerSize.y / 2.0f + 0.75f * UIPadding + 16.0f));
+	                               windowSize.y / 2.0f + characterContainerSize.y / 2.0f + 9.0f * UIPadding));
 	infoAreaSprite.setColor(Theme::activeTheme->panelLight);
+
 	auto& infoAreaController = infoArea.addScriptableBehaviour<InfoArea>(
-		20, 6, UIPadding, -characterContainerSize.x / 2.0f + 2 + UIPadding,
-		-characterContainerSize.y / 2.0f + 0.75f * UIPadding + 16.0f, infoAreaSprite);
+		18, 8, UIPadding, -characterContainerSize.x / 2.0f + 2.0f * UIPadding,
+		-characterContainerSize.y / 2.0f, infoAreaSprite);
+	auto [infoAreaTitle, infoAreaTitleLabel] = DeconstructLabel(
+		MakeLabel("Lato", "Battle Log", 32, TextAlignment::LEFT, Theme::activeTheme->primaryText)
+	);
+	infoAreaTitle.setPosition(glm::vec2(-0.5f * characterContainerSize.x,
+	                                    -0.5f * characterContainerSize.y - 16.0f - 0.5f * UIPadding));
+	infoArea.addChild(infoAreaTitle);
+
+	auto [fleeBattle, fleeBattleSprite, fleeBattleLabel, fleeBattleButton] = DeconstructButton(
+		MakeButton("assets/textures/square.png", glm::vec2(200, 40), "Lato", "Flee Battle", 24, TextAlignment::CENTER,
+		           Theme::activeTheme->secondaryText)
+	);
+	fleeBattle.setPosition(glm::vec2(windowSize.x - 100.0f - 4.0f * UIPadding,
+	                                 windowSize.y - 20.0f - 3.0f * UIPadding));
 
 	auto& playerController = gameContainer.addScriptableBehaviour<PlayerController>(
 		player, playerAttackButton, playerHealButton, playerFocusButton);
@@ -534,13 +580,20 @@ int main() {
 	auto& gameController = gameContainer.addScriptableBehaviour<GameController>(
 		infoAreaController, playerController, playerVisualizer, enemyVisualizer, playerStatusLabel, enemyStatusLabel);
 
+	continueGameController.setGameController(&gameController);
 	playerAttackButton.setOnClick([&gameController]() { gameController.playerAttack(); });
 	playerHealButton.setOnClick([&gameController]() { gameController.playerHeal(); });
 	playerFocusButton.setOnClick([&gameController]() { gameController.playerFocus(); });
+	fleeBattleButton.setOnClick([&gameController, &sceneManager]() {
+		gameController.saveGame();
+		sceneManager.popScene();
+		sceneManager.stackScene("mainMenu", true);
+	});
 
 	gameContainer.addChild(playerContainer);
 	gameContainer.addChild(enemyContainer);
 	gameContainer.addChild(infoArea);
+	gameContainer.addChild(fleeBattle);
 	gameScene.addChild(gameContainer);
 #pragma endregion
 

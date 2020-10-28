@@ -7,16 +7,17 @@ class SpriteRenderer;
 class CreateCharacterController final : public ScriptableBehaviour {
 public:
     CreateCharacterController(SpriteRenderer* characterImage, TextRenderer* characterNameText, TextRenderer* characterTypeText, TextRenderer* vitalityText,
-                              TextRenderer* damageText, TextRenderer* defenseText, TextRenderer* staminaText, TextRenderer* remainingPointsText);
+                              TextRenderer* attackText, TextRenderer* defenseText, TextRenderer* staminaText, TextRenderer* remainingPointsText);
 
     CreateCharacterController(const std::string& identifier, SpriteRenderer* characterImage, TextRenderer* characterNameText, TextRenderer* characterTypeText,
                               TextRenderer* vitalityText, TextRenderer* damageText, TextRenderer* defenseText, TextRenderer* staminaText, TextRenderer* remainingPointsText);
 
     void changeVitality(int amount);
-    void changeDamage(int amount);
+    void changeAttack(int amount);
     void changeDefense(int amount);
     void changeStamina(int amount);
     void randomizeName();
+    void randomizeStats();
     void changeTypeIndex(int amount);
     void exportCharacter() const;
     std::string getExportPath() const;
@@ -32,7 +33,7 @@ private:
     int maxPoints;
 
     int vitalityPoints;
-    int damagePoints;
+    int attackPoints;
     int defensePoints;
     int staminaPoints;
     int namesIndex;
@@ -43,7 +44,7 @@ private:
     TextRenderer* characterTypeText;
     TextRenderer* remainingPointsText;
     TextRenderer* vitalityText;
-    TextRenderer* damageText;
+    TextRenderer* attackText;
     TextRenderer* defenseText;
     TextRenderer* staminaText;
     const inline static int maxTypes = 5;

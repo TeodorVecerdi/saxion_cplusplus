@@ -16,10 +16,13 @@ public:
 	void playerAttack();
 	void playerHeal();
 	void playerFocus();
+	void continueGame();
+	void saveGame() const;
 protected:
 	void onStart() override;
 	void onUpdate(sf::Time ts) override;
 private:
+	void reset();
 	void enablePlayer();
 	void disablePlayer();
 
@@ -34,9 +37,11 @@ private:
 	TextRenderer& enemyStatusText;
 	Character* player;
 	Character* currentEnemy;
+	int enemiesKilled;
 	bool attackPriority; // who starts
 	bool currentOrder;   // currentOrder^attackPriority: false => player, true => enemy;
-
+	bool loadedGame;
+	
 	bool waitingForPlayer;
 	bool waitingForEnemy;
 	float waitForEnemyTimer;

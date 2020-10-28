@@ -1,6 +1,6 @@
 #vitality
 1
-#damage
+#attack
 2
 #defense
 2

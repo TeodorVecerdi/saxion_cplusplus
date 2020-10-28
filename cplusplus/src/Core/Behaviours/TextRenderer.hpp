@@ -23,6 +23,7 @@ public:
     sf::Color getFillColor() const;
     sf::Color getOutlineColor() const;
     uint32_t getFontSize() const;
+    sf::FloatRect getGlobalBounds() const;
 protected:
     void onRender(sf::RenderWindow& window) const override;
     void onUpdate(sf::Time ts) override;

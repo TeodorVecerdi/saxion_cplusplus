@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 
 #include "DifficultySettings.hpp"
 #include "Core/IO.hpp"
@@ -11,7 +10,11 @@ public:
 		Difficulty::activeDifficulty = activeDifficulty;
 	}
 
-	static DifficultySettings& GetDifficulty() {
+	static int GetDifficulty() {
+		return activeDifficulty;
+	}
+
+	static DifficultySettings& GetDifficultySettings() {
 		if (!loadedDifficulties) loadDifficulties();
 		return difficultySettings[activeDifficulty];
 	}

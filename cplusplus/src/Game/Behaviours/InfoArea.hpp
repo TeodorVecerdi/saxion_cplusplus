@@ -17,7 +17,7 @@ private:
 	float positionX;
 	float positionY;
 	int maxMessages;
-	bool messagesDirty;
+	bool initializedMessages;
 	SpriteRenderer& infoAreaContainer;
 	std::vector<std::string> messages;
 	std::vector<TextRenderer*> messageRenderers;

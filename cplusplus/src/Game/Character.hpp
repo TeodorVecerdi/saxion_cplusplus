@@ -1,14 +1,14 @@
 #pragma once
 #include <cmath>
 #include <string>
+#include <fstream>
 
 class Character {
 public:
     Character(const std::string& name, const std::string& characterType, int vitality, int attack, int defense, int stamina);
     Character(const std::string& fileName);
     Character();
-    void exportCharacter(const std::string& fileName) const;
-    void loadFromFile(const std::string& fileName);
+    
 // Getters and setters
     void setName(const std::string& name);
     void setCharacterType(const std::string& characterType);
@@ -36,6 +36,9 @@ public:
 
     void setIsPlayer(bool isPlayer);
     void randomize(int maxPoints);
+    void loadFromCharacter(Character& character);
+    void loadFromFile(const std::string& fileName);
+    void exportCharacter(const std::string& fileName, int openMode = std::ios::out) const;
 public://static
     static void loadBaseStats();
     static const int healthMultiplier = 5;

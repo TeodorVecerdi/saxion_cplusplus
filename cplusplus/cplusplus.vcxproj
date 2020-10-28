@@ -148,10 +148,10 @@
         <ClCompile Include="src\Core\Behaviours\FilledSpriteRenderer.cpp" />
         <ClCompile Include="src\Core\Drawing\SliceSprite.cpp" />
         <ClCompile Include="src\Game\Behaviours\CharacterVisualizer.cpp" />
+        <ClCompile Include="src\Game\Behaviours\ContinueGame.cpp" />
         <ClCompile Include="src\Game\Behaviours\CreateCharacterController.cpp" />
         <ClCompile Include="src\Game\Behaviours\GameController.cpp" />
         <ClCompile Include="src\Game\Behaviours\InfoArea.cpp" />
-        <ClCompile Include="src\Game\Behaviours\TestBehaviour.cpp" />
         <ClCompile Include="src\Game\Character.cpp" />
         <ClCompile Include="src\Core\Behaviours\Button.cpp" />
         <ClCompile Include="src\Core\Fonts.cpp" />
@@ -173,11 +173,11 @@
         <ClInclude Include="src\Core\Scene\GameObjectTemplates.hpp" />
         <ClInclude Include="src\Game\Behaviours\CharacterState.hpp" />
         <ClInclude Include="src\Game\Behaviours\CharacterVisualizer.hpp" />
+        <ClInclude Include="src\Game\Behaviours\ContinueGame.hpp" />
         <ClInclude Include="src\Game\Behaviours\CreateCharacterController.hpp" />
         <ClInclude Include="src\Core\IO.hpp" />
         <ClInclude Include="src\Game\Behaviours\GameController.hpp" />
         <ClInclude Include="src\Game\Behaviours\InfoArea.hpp" />
-        <ClInclude Include="src\Game\Behaviours\TestBehaviour.hpp" />
         <ClInclude Include="src\Game\Character.hpp" />
         <ClInclude Include="src\Core\Behaviours\Button.hpp" />
         <ClInclude Include="src\Core\Behaviours\SpriteRenderer.hpp" />
@@ -200,14 +200,9 @@
         <ClInclude Include="src\Core\Behaviours\TextRenderer.hpp" />
     </ItemGroup>
     <ItemGroup>
-        <Textures Include="assets\textures\**\*" />
-        <Fonts Include="assets\fonts\**\*" />
-        <Data Include="assets\data\**\*" />
-    </ItemGroup>
-    <ItemGroup>
-      <Content Include="assets\data\difficulty_settings\easy.txt" />
-      <Content Include="assets\data\difficulty_settings\hard.txt" />
-      <Content Include="assets\data\difficulty_settings\normal.txt" />
+        <Content Include="assets\textures\**" />
+        <Content Include="assets\fonts\**" />
+        <Content Include="assets\data\**" />
     </ItemGroup>
     <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
     <ImportGroup Label="ExtensionTargets">

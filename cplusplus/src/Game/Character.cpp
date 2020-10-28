@@ -1,11 +1,7 @@
 #include "Character.hpp"
 
-#include <fstream>
-
-#include "Core/IO.hpp"
 #include "State/Difficulty.hpp"
 #include "Utils/Debug.hpp"
-#include "Utils/StringUtils.hpp"
 
 Character::Character(const std::string& name, const std::string& characterType, int vitality, int attack, int defense,
                      int stamina) : health(vitality * healthMultiplier),
@@ -96,9 +92,10 @@ int Character::getDefensePower() const {
 	int defensePower = getDefense() + rand() % 5 - 2; // defense +/- 2
 	return defensePower;
 }
+
 int Character::getHealPower() const {
 	int healPower = getStamina() + rand() % 11 - 5; // stamina +/- 5
-	if (healPower <= 0) healPower = 1; // at least heal a bit if you were unlucky
+	if (healPower <= 0) healPower = 1;              // at least heal a bit if you were unlucky
 	return healPower;
 }
 
@@ -119,8 +116,8 @@ void Character::setIsPlayer(const bool isPlayer) {
 }
 
 bool Character::canEvade() const {
-	int chance = Difficulty::GetDifficulty().EnemyEvadeChance;
-	if (isPlayer) chance = Difficulty::GetDifficulty().PlayerEvadeChance;
+	int chance = Difficulty::GetDifficultySettings().EnemyEvadeChance;
+	if (isPlayer) chance = Difficulty::GetDifficultySettings().PlayerEvadeChance;
 
 	bool evade = false;
 	for (int i = getDefense(); i > 0; i--) {
@@ -171,15 +168,28 @@ void Character::randomize(int maxPoints) {
 	this->attack = attack + baseStats[enemyTypeIndex].attack;
 	this->defense = defense + baseStats[enemyTypeIndex].defense;
 	this->stamina = stamina + baseStats[enemyTypeIndex].stamina;
-	printf("Randomized character with stats vitality=%i, attack=%i, defense=%i, stamina=%i\n", vitality, attack,
+	printf("[Character::randomize(int)] Randomized character with stats vitality=%i, attack=%i, defense=%i, stamina=%i\n", vitality, attack,
 	       defense, stamina);
 	this->health = getMaxHealth();
 }
 
-void Character::exportCharacter(const std::string& fileName) const {
-	if (IO::BeginWrite(fileName)) {
+void Character::loadFromCharacter(Character& character) {
+	setName(character.getName());
+	setCharacterType(character.getCharacterType());
+	setAttack(character.getAttack());
+	setDefense(character.getDefense());
+	setHealth(character.getHealth());
+	setStamina(character.getStamina());
+	setVitality(character.getVitality());
+	setIsPlayer(character.isPlayer);
+}
+
+void Character::exportCharacter(const std::string& fileName, const int openMode) const {
+	if (IO::BeginWrite(fileName, openMode)) {
+		IO::WriteTitle(string_format("###### CHARACTER [%s]_[%s]", capitalize(name).c_str(), capitalize(characterType).c_str()));
 		IO::Write(name, "name");
 		IO::Write(characterType, "characterType");
+		IO::Write(health, "health");
 		IO::Write(vitality, "vitality");
 		IO::Write(attack, "attack");
 		IO::Write(defense, "defense");
@@ -192,11 +202,11 @@ void Character::loadFromFile(const std::string& fileName) {
 	if (IO::BeginRead(fileName)) {
 		IO::ReadString(name);
 		IO::ReadString(characterType);
+		IO::ReadInt(health);
 		IO::ReadInt(vitality);
 		IO::ReadInt(attack);
 		IO::ReadInt(defense);
 		IO::ReadInt(stamina);
-		health = vitality * healthMultiplier;
 		IO::EndRead();
 	} else {
 		printf("Failed to load file %s. Check that the file exists.\n", fileName.c_str());
