@@ -729,7 +729,8 @@ int main(int argc, char* argv[]) {
 			scoreboard.addScore({difficulty, score, playerName});
 			sceneManager.popScene();
 			sceneManager.stackScene("gameOver", true);
-		});
+		}
+	);
 
 	continueGameController.setGameController(&gameController);
 	playerAttackButton.setOnClick([&gameController]() { gameController.playerAttack(); });

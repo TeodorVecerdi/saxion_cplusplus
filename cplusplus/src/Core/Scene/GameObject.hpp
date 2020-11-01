@@ -2,8 +2,8 @@
 #include "Core/Core.hpp"
 #include "ScriptableBehaviour.hpp"
 #include "Transform2D.hpp"
-template <typename T> concept behaviour_type = std::is_base_of<ScriptableBehaviour, T>::value;
-template <typename T, typename ... Args> concept constructible = std::is_constructible<T, Args...>::value;
+template <typename T> concept behaviour_type = std::is_base_of_v<ScriptableBehaviour, T>;
+template <typename T, typename ... Args> concept constructible = std::is_constructible_v<T, Args...>;
 
 class GameObject {
 public:
