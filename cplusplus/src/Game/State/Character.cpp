@@ -105,10 +105,11 @@ bool Character::takeDamage(const int damage) {
 	return false;
 }
 
-void Character::heal(int healPower) {
+int Character::heal(int healPower) {
 	const int maxHealth = getMaxHealth();
+	if (health + healPower > maxHealth) healPower = maxHealth - health;
 	health += healPower;
-	if (health > maxHealth) health = maxHealth;
+	return healPower;
 }
 
 void Character::setIsPlayer(const bool isPlayer) {
@@ -168,8 +169,10 @@ void Character::randomize(int maxPoints) {
 	this->attack = attack + baseStats[enemyTypeIndex].attack;
 	this->defense = defense + baseStats[enemyTypeIndex].defense;
 	this->stamina = stamina + baseStats[enemyTypeIndex].stamina;
-	printf("[Character::randomize(int)] Randomized character with stats vitality=%i, attack=%i, defense=%i, stamina=%i\n", vitality, attack,
-	       defense, stamina);
+	printf(
+		"[Character::randomize(int)] Randomized character with stats vitality=%i, attack=%i, defense=%i, stamina=%i\n",
+		vitality, attack,
+		defense, stamina);
 	this->health = getMaxHealth();
 }
 
@@ -186,7 +189,8 @@ void Character::loadFromCharacter(Character& character) {
 
 void Character::exportCharacter(const std::string& fileName, const int openMode) const {
 	if (IO::BeginWrite(fileName, openMode)) {
-		IO::WriteTitle(string_format("###### CHARACTER [%s]_[%s]", capitalize(name).c_str(), capitalize(characterType).c_str()));
+		IO::WriteTitle(string_format("###### CHARACTER [%s]_[%s]", capitalize(name).c_str(),
+		                             capitalize(characterType).c_str()));
 		IO::Write(name, "name");
 		IO::Write(characterType, "characterType");
 		IO::Write(health, "health");

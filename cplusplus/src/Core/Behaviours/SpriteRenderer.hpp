@@ -14,6 +14,7 @@ public:
     void setColor(sf::Color color);
     sf::Color getColor() const;
     sf::FloatRect getGlobalBounds() const;
+    void setEnabled(bool enabled);
 protected:
     void onRender(sf::RenderWindow& window) const override;
     void onUpdate(sf::Time ts) override;
@@ -25,4 +26,5 @@ private:
     sf::Texture texture;
     sf::Sprite sprite;
     bool smooth;
+    bool enabled;
 };

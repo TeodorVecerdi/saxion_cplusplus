@@ -6,7 +6,7 @@ SpriteRenderer::SpriteRenderer(const std::string& texturePath, const bool setSmo
 	SpriteRenderer(default_identifier(this), texturePath, setSmooth) {
 }
 
-SpriteRenderer::SpriteRenderer(const std::string& identifier, const std::string& texturePath, const bool setSmooth) : ScriptableBehaviour(identifier), smooth(setSmooth) {
+SpriteRenderer::SpriteRenderer(const std::string& identifier, const std::string& texturePath, const bool setSmooth) : ScriptableBehaviour(identifier), smooth(setSmooth), enabled(true) {
 	setTexture(texturePath);
 	texture.setSmooth(setSmooth);
 	sprite.setTexture(texture);
@@ -35,6 +35,7 @@ void SpriteRenderer::setSize(const glm::vec2 size) {
 void SpriteRenderer::setSmooth(bool smooth) {
 	this->smooth = smooth;
 	texture.setSmooth(smooth);
+	sprite.setTexture(texture, true);
 }
 
 glm::vec2 SpriteRenderer::getSize() const { return size; }
@@ -51,6 +52,10 @@ sf::FloatRect SpriteRenderer::getGlobalBounds() const {
 	return sprite.getGlobalBounds();
 }
 
+void SpriteRenderer::setEnabled(bool enabled) {
+	this->enabled = enabled;
+}
+
 void SpriteRenderer::recalculateSizeMultiplier() {
 	const auto textureSize = texture.getSize();
 	this->textureSize = glm::vec2(textureSize.x, textureSize.y);
@@ -58,6 +63,7 @@ void SpriteRenderer::recalculateSizeMultiplier() {
 }
 
 void SpriteRenderer::onUpdate(sf::Time ts) {
+	if(!enabled) return;
 	const auto renderTransform = owner->getRenderTransform();
 
 	sprite.setScale(renderTransform.scale.x * sizeMultiplier.x, renderTransform.scale.y * sizeMultiplier.y);
@@ -67,5 +73,6 @@ void SpriteRenderer::onUpdate(sf::Time ts) {
 }
 
 void SpriteRenderer::onRender(sf::RenderWindow& window) const {
+	if(!enabled) return;
 	window.draw(sprite);
 }

@@ -1,13 +1,11 @@
 ﻿#include "PlayerController.hpp"
 
-
 #include "Core/Behaviours/Button.hpp"
-#include "Core/Behaviours/SpriteRenderer.hpp"
-#include "Game/Character.hpp"
+#include "Game/State/Character.hpp"
 
-PlayerController::PlayerController(Character* character, Button& attackButton, Button& healButton, Button& focusButton) : PlayerController(default_identifier(this), character, attackButton, healButton, focusButton){}
+PlayerController::PlayerController(std::shared_ptr<Character> character, Button& attackButton, Button& healButton, Button& focusButton) : PlayerController(default_identifier(this), character, attackButton, healButton, focusButton){}
 
-PlayerController::PlayerController(const std::string& identifier, Character* character, Button& attackButton, Button& healButton, Button& focusButton) :
+PlayerController::PlayerController(const std::string& identifier, std::shared_ptr<Character> character, Button& attackButton, Button& healButton, Button& focusButton) :
     ScriptableBehaviour(identifier), character(character), attackButton(attackButton), healButton(healButton), focusButton(focusButton) {
 }
 
@@ -23,10 +21,7 @@ void PlayerController::disableControls() {
     focusButton.setEnabled(false);
 }
 
-Character* PlayerController::getPlayer() {
+std::shared_ptr<Character> PlayerController::getPlayer() {
     return character;
 }
 
-void PlayerController::onUpdate(sf::Time ts) {}
-
-void PlayerController::onStart() {}

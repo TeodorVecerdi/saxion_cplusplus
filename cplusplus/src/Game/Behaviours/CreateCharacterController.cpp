@@ -3,7 +3,7 @@
 #include "Core/IO.hpp"
 #include "Core/Behaviours/SpriteRenderer.hpp"
 #include "Core/Behaviours/TextRenderer.hpp"
-#include "Game/Character.hpp"
+#include "Game/State/Character.hpp"
 #include "Game/State/Difficulty.hpp"
 
 CreateCharacterController::CreateCharacterController(SpriteRenderer* characterImage, TextRenderer* characterNameText,

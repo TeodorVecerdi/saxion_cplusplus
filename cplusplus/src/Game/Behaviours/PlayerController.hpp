@@ -7,18 +7,14 @@ class Character;
 
 class PlayerController final : public ScriptableBehaviour {
 public:
-	PlayerController(Character* character, Button& attackButton, Button& healButton, Button& focusButton);
-	PlayerController(const std::string& identifier, Character* character, Button& attackButton, Button& healButton,
+	PlayerController(std::shared_ptr<Character> character, Button& attackButton, Button& healButton, Button& focusButton);
+	PlayerController(const std::string& identifier, std::shared_ptr<Character> character, Button& attackButton, Button& healButton,
 	                 Button& focusButton);
 	void enableControls();
 	void disableControls();
-	Character* getPlayer();
-protected:
-	void onUpdate(sf::Time ts) override;
-	void onStart() override;
-
+	std::shared_ptr<Character> getPlayer();
 private:
-	Character* character;
+	std::shared_ptr<Character> character;
 	Button& attackButton;
 	Button& healButton;
 	Button& focusButton;

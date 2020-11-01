@@ -40,7 +40,7 @@ void Button::onUpdate(const sf::Time ts) {
     }
 
     const auto spriteRect = sprite->getGlobalBounds();
-    const bool isHovering = spriteRect.contains(Input::mouseX, Input::mouseY);
+    const bool isHovering = spriteRect.contains(static_cast<float>(Input::mouseX), static_cast<float>(Input::mouseY));
     if (isHovering && Input::GetMouseButton(0)) {
         sprite->setColor(activeTheme->buttonActive);
     } else if (isHovering) {

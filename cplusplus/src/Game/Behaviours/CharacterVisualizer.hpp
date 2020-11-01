@@ -10,29 +10,32 @@ class Character;
 
 class CharacterVisualizer final : public ScriptableBehaviour {
 public:
-	CharacterVisualizer(Character* character, SpriteRenderer* mainSprite, FilledSpriteRenderer* healthBar,
-	                    TextRenderer* healthText, TextRenderer* nameText);
-	CharacterVisualizer(Character* character, SpriteRenderer* mainSprite, FilledSpriteRenderer* healthBar,
-	                    TextRenderer* healthText, TextRenderer* nameText, FilledSpriteRenderer* levelBar, TextRenderer* levelText,
-	                    TextRenderer* levelProgressText);
-	void setCharacter(Character* character);
+	CharacterVisualizer(std::shared_ptr<Character> character, SpriteRenderer* mainSprite,
+	                    FilledSpriteRenderer* healthBar,
+	                    TextRenderer* healthText, TextRenderer* nameText, TextRenderer* vitAttrLabel,
+	                    TextRenderer* atkAttrLabel, TextRenderer* defAttrLabel, TextRenderer* stmAttrLabel);
+	CharacterVisualizer(const std::string& identifier, std::shared_ptr<Character> character, SpriteRenderer* mainSprite,
+	                    FilledSpriteRenderer* healthBar,
+	                    TextRenderer* healthText, TextRenderer* nameText, TextRenderer* vitAttrLabel,
+	                    TextRenderer* atkAttrLabel, TextRenderer* defAttrLabel, TextRenderer* stmAttrLabel);
+	void setCharacter(std::shared_ptr<Character> character);
 	void setState(CharacterState state);
 protected:
-	void onUpdate(const sf::Time ts) override;
+	void onUpdate(sf::Time ts) override;
 private:
-	bool visualizeLevel = true;
 	CharacterState state;
 	float characterStateTimer;
 	const float maintainStateTime = 2.0f;
-	
-	Character* character;
+
+	std::shared_ptr<Character> character;
 	SpriteRenderer* mainSprite;
 	FilledSpriteRenderer* healthBar;
 	TextRenderer* healthText;
 	TextRenderer* nameText;
-	FilledSpriteRenderer* levelBar;
-	TextRenderer* levelText;
-	TextRenderer* levelProgressText;
+	TextRenderer* vitAttrLabel;
+	TextRenderer* atkAttrLabel;
+	TextRenderer* defAttrLabel;
+	TextRenderer* stmAttrLabel;
 
 	std::unique_ptr<sf::Texture> idleTexture;
 	std::unique_ptr<sf::Texture> hurtTexture;

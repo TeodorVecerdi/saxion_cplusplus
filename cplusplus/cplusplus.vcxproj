@@ -145,29 +145,221 @@
         </Link>
     </ItemDefinitionGroup>
     <ItemGroup>
+        <ClCompile Include="src\Application.cpp">
+          <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+          <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+          <Optimization>Disabled</Optimization>
+          <SupportJustMyCode>true</SupportJustMyCode>
+          <AssemblerOutput>NoListing</AssemblerOutput>
+          <AssemblerListingLocation>Debug\</AssemblerListingLocation>
+          <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+          <BrowseInformation>false</BrowseInformation>
+          <BrowseInformationFile>Debug\</BrowseInformationFile>
+          <CompileAs>Default</CompileAs>
+          <ConformanceMode>true</ConformanceMode>
+          <DiagnosticsFormat>Column</DiagnosticsFormat>
+          <DisableLanguageExtensions>false</DisableLanguageExtensions>
+          <ErrorReporting>Prompt</ErrorReporting>
+          <ExpandAttributedSource>false</ExpandAttributedSource>
+          <ExceptionHandling>Sync</ExceptionHandling>
+          <EnableASAN>false</EnableASAN>
+          <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+          <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+          <FloatingPointModel>Precise</FloatingPointModel>
+          <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+          <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+          <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+          <IntrinsicFunctions>false</IntrinsicFunctions>
+          <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+          <LanguageStandard>stdcpplatest</LanguageStandard>
+          <MinimalRebuild>false</MinimalRebuild>
+          <OmitDefaultLibName>false</OmitDefaultLibName>
+          <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+          <WholeProgramOptimization>false</WholeProgramOptimization>
+          <ObjectFileName>Debug\</ObjectFileName>
+          <CallingConvention>Cdecl</CallingConvention>
+          <ProgramDataBaseFileName>Debug\vc142.pdb</ProgramDataBaseFileName>
+          <PrecompiledHeader>NotUsing</PrecompiledHeader>
+          <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+          <PrecompiledHeaderOutputFile>Debug\cplusplus.pch</PrecompiledHeaderOutputFile>
+          <PreprocessToFile>false</PreprocessToFile>
+          <PreprocessKeepComments>false</PreprocessKeepComments>
+          <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+          <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+          <ShowIncludes>false</ShowIncludes>
+          <SuppressStartupBanner>true</SuppressStartupBanner>
+          <BufferSecurityCheck>true</BufferSecurityCheck>
+          <SmallerTypeCheck>false</SmallerTypeCheck>
+          <SpectreMitigation>false</SpectreMitigation>
+          <StructMemberAlignment>Default</StructMemberAlignment>
+          <TrackerLogDirectory>Debug\cplusplus.tlog\</TrackerLogDirectory>
+          <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+          <TreatWarningAsError>false</TreatWarningAsError>
+          <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+          <UseFullPaths>true</UseFullPaths>
+          <WarningLevel>Level3</WarningLevel>
+          <XMLDocumentationFileName>Debug\</XMLDocumentationFileName>
+          <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+          <IntelJCCErratum>false</IntelJCCErratum>
+          <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
+          <EnablePREfast>false</EnablePREfast>
+          <OmitFramePointers>false</OmitFramePointers>
+          <SDLCheck>true</SDLCheck>
+          <DisableSpecificWarnings>26812</DisableSpecificWarnings>
+          <AdditionalIncludeDirectories>src;C:\dev\.tools\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
+          <LinkCompiled>true</LinkCompiled>
+        </ClCompile>
         <ClCompile Include="src\Core\Behaviours\FilledSpriteRenderer.cpp" />
         <ClCompile Include="src\Core\Drawing\SliceSprite.cpp" />
         <ClCompile Include="src\Game\Behaviours\CharacterVisualizer.cpp" />
         <ClCompile Include="src\Game\Behaviours\ContinueGame.cpp" />
         <ClCompile Include="src\Game\Behaviours\CreateCharacterController.cpp" />
         <ClCompile Include="src\Game\Behaviours\GameController.cpp" />
+        <ClCompile Include="src\Game\Behaviours\GameOverScore.cpp" />
         <ClCompile Include="src\Game\Behaviours\InfoArea.cpp" />
-        <ClCompile Include="src\Game\Character.cpp" />
+        <ClCompile Include="src\Game\Behaviours\Ranking.cpp" />
         <ClCompile Include="src\Core\Behaviours\Button.cpp" />
         <ClCompile Include="src\Core\Fonts.cpp" />
         <ClCompile Include="src\Core\Behaviours\SpriteRenderer.cpp" />
         <ClCompile Include="src\Game\Behaviours\FPSCounter.cpp" />
-        <ClCompile Include="main.cpp" />
         <ClCompile Include="src\Core\Scene\SceneManager.cpp" />
         <ClCompile Include="src\Core\Scene\Scene.cpp" />
         <ClCompile Include="src\Core\Scene\GameObject.cpp" />
         <ClCompile Include="src\Game\Behaviours\PlayerController.cpp" />
-        <ClCompile Include="src\Core\Scoreboard.cpp" />
         <ClCompile Include="src\Core\Scene\ScriptableBehaviour.cpp" />
         <ClCompile Include="src\Core\Behaviours\TextRenderer.cpp" />
+        <ClCompile Include="src\Game\State\Character.cpp">
+          <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+          <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+          <Optimization>Disabled</Optimization>
+          <SupportJustMyCode>true</SupportJustMyCode>
+          <AssemblerOutput>NoListing</AssemblerOutput>
+          <AssemblerListingLocation>Debug\</AssemblerListingLocation>
+          <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+          <BrowseInformation>false</BrowseInformation>
+          <BrowseInformationFile>Debug\</BrowseInformationFile>
+          <CompileAs>Default</CompileAs>
+          <ConformanceMode>true</ConformanceMode>
+          <DiagnosticsFormat>Column</DiagnosticsFormat>
+          <DisableLanguageExtensions>false</DisableLanguageExtensions>
+          <ErrorReporting>Prompt</ErrorReporting>
+          <ExpandAttributedSource>false</ExpandAttributedSource>
+          <ExceptionHandling>Sync</ExceptionHandling>
+          <EnableASAN>false</EnableASAN>
+          <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+          <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+          <FloatingPointModel>Precise</FloatingPointModel>
+          <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+          <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+          <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+          <IntrinsicFunctions>false</IntrinsicFunctions>
+          <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+          <LanguageStandard>stdcpplatest</LanguageStandard>
+          <MinimalRebuild>false</MinimalRebuild>
+          <OmitDefaultLibName>false</OmitDefaultLibName>
+          <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+          <WholeProgramOptimization>false</WholeProgramOptimization>
+          <ObjectFileName>Debug\</ObjectFileName>
+          <CallingConvention>Cdecl</CallingConvention>
+          <ProgramDataBaseFileName>Debug\vc142.pdb</ProgramDataBaseFileName>
+          <PrecompiledHeader>NotUsing</PrecompiledHeader>
+          <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+          <PrecompiledHeaderOutputFile>Debug\cplusplus.pch</PrecompiledHeaderOutputFile>
+          <PreprocessToFile>false</PreprocessToFile>
+          <PreprocessKeepComments>false</PreprocessKeepComments>
+          <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+          <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+          <ShowIncludes>false</ShowIncludes>
+          <SuppressStartupBanner>true</SuppressStartupBanner>
+          <BufferSecurityCheck>true</BufferSecurityCheck>
+          <SmallerTypeCheck>false</SmallerTypeCheck>
+          <SpectreMitigation>false</SpectreMitigation>
+          <StructMemberAlignment>Default</StructMemberAlignment>
+          <TrackerLogDirectory>Debug\cplusplus.tlog\</TrackerLogDirectory>
+          <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+          <TreatWarningAsError>false</TreatWarningAsError>
+          <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+          <UseFullPaths>true</UseFullPaths>
+          <WarningLevel>Level3</WarningLevel>
+          <XMLDocumentationFileName>Debug\</XMLDocumentationFileName>
+          <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+          <IntelJCCErratum>false</IntelJCCErratum>
+          <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
+          <EnablePREfast>false</EnablePREfast>
+          <OmitFramePointers>false</OmitFramePointers>
+          <SDLCheck>true</SDLCheck>
+          <DisableSpecificWarnings>26812</DisableSpecificWarnings>
+          <AdditionalIncludeDirectories>src;C:\dev\.tools\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
+          <LinkCompiled>true</LinkCompiled>
+        </ClCompile>
+        <ClCompile Include="src\Game\State\Scoreboard.cpp">
+          <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+          <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+          <Optimization>Disabled</Optimization>
+          <SupportJustMyCode>true</SupportJustMyCode>
+          <AssemblerOutput>NoListing</AssemblerOutput>
+          <AssemblerListingLocation>Debug\</AssemblerListingLocation>
+          <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+          <BrowseInformation>false</BrowseInformation>
+          <BrowseInformationFile>Debug\</BrowseInformationFile>
+          <CompileAs>Default</CompileAs>
+          <ConformanceMode>true</ConformanceMode>
+          <DiagnosticsFormat>Column</DiagnosticsFormat>
+          <DisableLanguageExtensions>false</DisableLanguageExtensions>
+          <ErrorReporting>Prompt</ErrorReporting>
+          <ExpandAttributedSource>false</ExpandAttributedSource>
+          <ExceptionHandling>Sync</ExceptionHandling>
+          <EnableASAN>false</EnableASAN>
+          <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+          <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+          <FloatingPointModel>Precise</FloatingPointModel>
+          <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+          <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+          <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+          <IntrinsicFunctions>false</IntrinsicFunctions>
+          <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+          <LanguageStandard>stdcpplatest</LanguageStandard>
+          <MinimalRebuild>false</MinimalRebuild>
+          <OmitDefaultLibName>false</OmitDefaultLibName>
+          <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+          <WholeProgramOptimization>false</WholeProgramOptimization>
+          <ObjectFileName>Debug\</ObjectFileName>
+          <CallingConvention>Cdecl</CallingConvention>
+          <ProgramDataBaseFileName>Debug\vc142.pdb</ProgramDataBaseFileName>
+          <PrecompiledHeader>NotUsing</PrecompiledHeader>
+          <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+          <PrecompiledHeaderOutputFile>Debug\cplusplus.pch</PrecompiledHeaderOutputFile>
+          <PreprocessToFile>false</PreprocessToFile>
+          <PreprocessKeepComments>false</PreprocessKeepComments>
+          <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+          <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+          <ShowIncludes>false</ShowIncludes>
+          <SuppressStartupBanner>true</SuppressStartupBanner>
+          <BufferSecurityCheck>true</BufferSecurityCheck>
+          <SmallerTypeCheck>false</SmallerTypeCheck>
+          <SpectreMitigation>false</SpectreMitigation>
+          <StructMemberAlignment>Default</StructMemberAlignment>
+          <TrackerLogDirectory>Debug\cplusplus.tlog\</TrackerLogDirectory>
+          <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+          <TreatWarningAsError>false</TreatWarningAsError>
+          <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+          <UseFullPaths>true</UseFullPaths>
+          <WarningLevel>Level3</WarningLevel>
+          <XMLDocumentationFileName>Debug\</XMLDocumentationFileName>
+          <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+          <IntelJCCErratum>false</IntelJCCErratum>
+          <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
+          <EnablePREfast>false</EnablePREfast>
+          <OmitFramePointers>false</OmitFramePointers>
+          <SDLCheck>true</SDLCheck>
+          <DisableSpecificWarnings>26812</DisableSpecificWarnings>
+          <AdditionalIncludeDirectories>src;C:\dev\.tools\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
+          <LinkCompiled>true</LinkCompiled>
+        </ClCompile>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="src\Core\Behaviours\FilledSpriteRenderer.hpp" />
+        <ClInclude Include="src\Core\Core.hpp" />
         <ClInclude Include="src\Core\Drawing\SliceSprite.hpp" />
         <ClInclude Include="src\Core\Drawing\Theme.hpp" />
         <ClInclude Include="src\Core\Scene\GameObjectTemplates.hpp" />
@@ -177,24 +369,25 @@
         <ClInclude Include="src\Game\Behaviours\CreateCharacterController.hpp" />
         <ClInclude Include="src\Core\IO.hpp" />
         <ClInclude Include="src\Game\Behaviours\GameController.hpp" />
+        <ClInclude Include="src\Game\Behaviours\GameOverScore.hpp" />
         <ClInclude Include="src\Game\Behaviours\InfoArea.hpp" />
-        <ClInclude Include="src\Game\Character.hpp" />
+        <ClInclude Include="src\Game\Behaviours\Ranking.hpp" />
         <ClInclude Include="src\Core\Behaviours\Button.hpp" />
         <ClInclude Include="src\Core\Behaviours\SpriteRenderer.hpp" />
         <ClInclude Include="src\Game\Behaviours\FPSCounter.hpp" />
-        <ClInclude Include="src\Core.hpp" />
         <ClInclude Include="src\Core\Fonts.hpp" />
         <ClInclude Include="src\Core\Scene\SceneManager.hpp" />
         <ClInclude Include="src\Core\Scene\Scene.hpp" />
         <ClInclude Include="src\Core\Input.hpp" />
         <ClInclude Include="src\Game\Behaviours\PlayerController.hpp" />
         <ClInclude Include="src\Core\Scene\Transform2D.hpp" />
+        <ClInclude Include="src\Game\State\Character.hpp" />
         <ClInclude Include="src\Game\State\Difficulty.hpp" />
         <ClInclude Include="src\Game\State\DifficultySettings.hpp" />
+        <ClInclude Include="src\Game\State\Score.hpp" />
+        <ClInclude Include="src\Game\State\Scoreboard.hpp" />
         <ClInclude Include="src\Utils\Debug.hpp" />
         <ClInclude Include="src\Core\Scene\GameObject.hpp" />
-        <ClInclude Include="src\Score.hpp" />
-        <ClInclude Include="src\Core\Scoreboard.hpp" />
         <ClInclude Include="src\Core\Scene\ScriptableBehaviour.hpp" />
         <ClInclude Include="src\Utils\StringUtils.hpp" />
         <ClInclude Include="src\Core\Behaviours\TextRenderer.hpp" />

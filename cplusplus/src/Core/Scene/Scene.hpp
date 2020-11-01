@@ -1,5 +1,5 @@
 #pragma once
-#include "Core.hpp"
+#include "Core/Core.hpp"
 #include "GameObject.hpp"
 
 class Scene final : public GameObject {

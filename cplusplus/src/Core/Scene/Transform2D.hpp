@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Core.hpp"
+#include "Core/Core.hpp"
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
 

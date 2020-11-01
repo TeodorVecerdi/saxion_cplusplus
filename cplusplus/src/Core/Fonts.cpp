@@ -18,6 +18,7 @@ void Fonts::RegisterDefaultFonts() {
     RegisterFont("Arial", "assets/fonts/arial.ttf");
     RegisterFont("Calibri", "assets/fonts/calibri.ttf");
     RegisterFont("Lato", "assets/fonts/Lato-Regular.ttf");
+    RegisterFont("Fira Code", "assets/fonts/FiraCode-Retina.ttf");
 }
 
 Fonts::~Fonts() {

@@ -1,6 +1,5 @@
-#include "Core.hpp"
+#include "Core/Core.hpp"
 #include "Core/Input.hpp"
-#include "Core/IO.hpp"
 
 #include "Core/Behaviours/SpriteRenderer.hpp"
 #include "Core/Behaviours/TextRenderer.hpp"
@@ -11,15 +10,18 @@
 #include "Core/Scene/SceneManager.hpp"
 #include "Core/Scene/GameObjectTemplates.hpp"
 
-#include "Game/Character.hpp"
+#include "Game/State/Character.hpp"
 #include "Game/Behaviours/FPSCounter.hpp"
 #include "Game/Behaviours/CreateCharacterController.hpp"
 #include "Game/Behaviours/PlayerController.hpp"
 #include "Game/Behaviours/CharacterVisualizer.hpp"
 #include "Game/Behaviours/ContinueGame.hpp"
 #include "Game/Behaviours/GameController.hpp"
+#include "Game/Behaviours/GameOverScore.hpp"
 #include "Game/Behaviours/InfoArea.hpp"
+#include "Game/Behaviours/Ranking.hpp"
 #include "Game/State/Difficulty.hpp"
+#include "Game/State/Scoreboard.hpp"
 
 #define GET_ARGi(idx,default) idx < argc ? std::stoi(argv[idx]) : default
 #define GET_ARGs(idx,default) idx < argc ? argv[idx] : default
@@ -33,7 +35,7 @@ int main(int argc, char* argv[]) {
 	std::filesystem::create_directory(temp);
 
 	sf::RenderWindow window(sf::VideoMode(width, height), "Hello SFML", sf::Style::Close);
-	window.setVerticalSyncEnabled(false);
+	window.setVerticalSyncEnabled(true);
 	sf::Clock deltaClock;
 	srand(static_cast<uint32_t>(time(nullptr)));
 
@@ -41,11 +43,13 @@ int main(int argc, char* argv[]) {
 	Scene mainMenu("mainMenu");
 	Scene difficultyMenu("difficultyMenu");
 	Scene gameScene("game");
+	Scene gameOverScene("gameOver");
 	SceneManager sceneManager;
 	sceneManager.registerScene(createCharacterScene);
 	sceneManager.registerScene(mainMenu);
 	sceneManager.registerScene(difficultyMenu);
 	sceneManager.registerScene(gameScene);
+	sceneManager.registerScene(gameOverScene);
 	sceneManager.stackScene(mainMenu, false);
 
 	mainMenu.addScriptableBehaviour<FPSCounter>(0.5f);
@@ -53,17 +57,16 @@ int main(int argc, char* argv[]) {
 	difficultyMenu.addScriptableBehaviour<FPSCounter>(0.5f);
 	gameScene.addScriptableBehaviour<FPSCounter>(0.5f);
 
-	auto* player = new Character();
+	Scoreboard scoreboard(8);
+	std::shared_ptr<Character> player = std::make_shared<Character>();
 	player->setIsPlayer(true);
 
 	// Colors
-	sf::Color lavenderBlush(234, 245, 255);
 	sf::Color mintCream(246, 255, 255);
 	sf::Color imperialRed(233, 54, 64);
 	sf::Color pacificBlue(15, 163, 184);
 	sf::Color oxfordBlue(0, 0, 25);
 	sf::Color independance(73, 71, 91);
-	sf::Color blackCoral(94, 105, 115);
 	sf::Color raisinBlack(32, 32, 48);
 
 	// Theme
@@ -106,17 +109,6 @@ int main(int argc, char* argv[]) {
 		TextAlignment::CENTER, Theme::activeTheme->secondaryText));
 	eraseData.setPosition(glm::vec2(window.getSize().x / 2.0f, window.getSize().y / 2.0f + 20 + 0.5f * UIPadding));
 
-	auto& continueGameController = continueGame.addScriptableBehaviour<ContinueGame>(
-		continueGameButton, eraseDataButton);
-	continueGameButton.setOnClick([&sceneManager, &continueGameController]() {
-		sceneManager.popScene();
-		sceneManager.stackScene("game", true);
-		continueGameController.continueGame();
-	});
-	eraseDataButton.setOnClick([&continueGameController]() {
-		continueGameController.eraseData();
-	});
-
 	auto [exitButtonObject, exitSprite, exitLabel, exitButton] = DeconstructButton(MakeButton(
 		"assets/textures/square.png", glm::vec2(200, 40), "Lato", "Exit", 24,
 		TextAlignment::CENTER, Theme::activeTheme->secondaryText));
@@ -124,10 +116,37 @@ int main(int argc, char* argv[]) {
 		glm::vec2(window.getSize().x / 2.0f, window.getSize().y / 2.0f + 40 + 20 + 1.5f * UIPadding));
 	exitButton.setOnClick([&window]() { window.close(); });
 
+	auto [rankingTextContainer, rankingTextContainerSprite] = DeconstructSprite(
+		MakeSprite("assets/textures/square.png", glm::vec2(0.5f * windowSize.x - 300, 0.5f * windowSize.y))
+	);
+	rankingTextContainerSprite.setColor(Theme::activeTheme->panelDark);
+	auto [rankingTitle, rankingTitleLabel] = DeconstructLabel(
+		MakeLabel("Lato", "RANKING", 32, TextAlignment::CENTER, Theme::activeTheme->primaryText)
+	);
+	rankingTitle.setPosition(glm::vec2(0, -0.25f * windowSize.y - 16 - UIPadding));
+
+	auto& rankingContainer = MakeEmpty();
+	rankingContainer.setPosition(glm::vec2(0.25f * windowSize.x - 50, 0.5f * windowSize.y));
+	rankingContainer.addChild(rankingTextContainer);
+	rankingContainer.addChild(rankingTitle);
+	auto& ranking = rankingContainer.addScriptableBehaviour<Ranking>(24, 16, -0.25f * windowSize.x + 150 + 2.0f*UIPadding, -0.25f * windowSize.y, rankingTextContainerSprite, scoreboard);
+
+	auto& continueGameController = continueGame.addScriptableBehaviour<ContinueGame>(
+            continueGameButton, eraseDataButton, ranking, scoreboard);
+	continueGameButton.setOnClick([&sceneManager, &continueGameController]() {
+        sceneManager.popScene();
+        sceneManager.stackScene("game", true);
+        continueGameController.continueGame();
+    });
+	eraseDataButton.setOnClick([&continueGameController]() {
+        continueGameController.eraseData();
+    });
+	
 	mainMenu.addChild(playGame);
 	mainMenu.addChild(continueGame);
 	mainMenu.addChild(eraseData);
 	mainMenu.addChild(exitButtonObject);
+	mainMenu.addChild(rankingContainer);
 #pragma endregion
 #pragma region Difficulty Selection
 	auto& difficultyContainer = MakeEmpty();
@@ -136,7 +155,7 @@ int main(int argc, char* argv[]) {
 		MakeLabel("Lato", "Select Difficulty", 32, TextAlignment::CENTER, Theme::activeTheme->primaryText));
 	difficultyTitle.setPosition(glm::vec2(0, -80 - 1.5f * UIPadding));
 	auto [easy, easySprite, easyLabel, easyButton] = DeconstructButton(MakeButton(
-		"assets/textures/square.png", glm::vec2(200, 40), "Lato", "Easy", 24, TextAlignment::CENTER,
+		"assets/textures/square.png", glm::vec2(200, 40), "Lato", capitalize(Difficulty::GetDifficultyName(0)), 24, TextAlignment::CENTER,
 		Theme::activeTheme->secondaryText));
 	easy.setPosition(glm::vec2(0, -40 - UIPadding));
 	easyButton.setOnClick([&sceneManager]() {
@@ -145,7 +164,7 @@ int main(int argc, char* argv[]) {
 		sceneManager.stackScene("createCharacter", true);
 	});
 	auto [normal, normalSprite, normalLabel, normalButton] = DeconstructButton(MakeButton(
-		"assets/textures/square.png", glm::vec2(200, 40), "Lato", "Normal", 24, TextAlignment::CENTER,
+		"assets/textures/square.png", glm::vec2(200, 40), "Lato", capitalize(Difficulty::GetDifficultyName(1)), 24, TextAlignment::CENTER,
 		Theme::activeTheme->secondaryText));
 	normalButton.setOnClick([&sceneManager]() {
 		Difficulty::SetActiveDifficulty(1);
@@ -153,7 +172,7 @@ int main(int argc, char* argv[]) {
 		sceneManager.stackScene("createCharacter", true);
 	});
 	auto [hard, hardSprite, hardLabel, hardButton] = DeconstructButton(MakeButton(
-		"assets/textures/square.png", glm::vec2(200, 40), "Lato", "Hard", 24, TextAlignment::CENTER,
+		"assets/textures/square.png", glm::vec2(200, 40), "Lato", capitalize(Difficulty::GetDifficultyName(2)), 24, TextAlignment::CENTER,
 		Theme::activeTheme->secondaryText));
 	hard.setPosition(glm::vec2(0, 40 + UIPadding));
 	hardButton.setOnClick([&sceneManager]() {
@@ -304,10 +323,11 @@ int main(int argc, char* argv[]) {
 	                                            4.0f * lineHeight32 + 4.5f * UIPadding));
 
 	auto [randomizeStats, randomizeStatsSprite, randomizeStatsLabel, randomizeStatsButton] = DeconstructButton(
-		MakeButton("assets/textures/square.png", glm::vec2(col2.width - 4 * UIPadding, 32), "Lato", "Randomize stats", 24, TextAlignment::CENTER, Theme::activeTheme->secondaryText)
+		MakeButton("assets/textures/square.png", glm::vec2(col2.width - 4 * UIPadding, 32), "Lato", "Randomize stats",
+		           24, TextAlignment::CENTER, Theme::activeTheme->secondaryText)
 	);
 	randomizeStats.setPosition(glm::vec2(col2.width / 2.0f, 5.0f * lineHeight32 + 5.0f * UIPadding));
-	
+
 	auto& col2Object = MakeEmpty();
 	col2Object.setOrigin(glm::vec2(0));
 	col2Object.setPosition(glm::vec2(col2.left, col2.top));
@@ -393,7 +413,7 @@ int main(int argc, char* argv[]) {
 	stIButton.setOnClick([&createCharacterController]() {
 		createCharacterController.changeStamina(1);
 	});
-	randomizeStatsButton.setOnClick([&createCharacterController] () {
+	randomizeStatsButton.setOnClick([&createCharacterController]() {
 		createCharacterController.randomizeStats();
 	});
 	createCharacterScene.addChild(createCharacterObject);
@@ -402,7 +422,8 @@ int main(int argc, char* argv[]) {
 #pragma region Game Scene
 	auto& gameContainer = MakeEmpty();
 
-	auto characterContainerSize = glm::vec2(windowSize.x / 2.0f - 12 * UIPadding, windowSize.y / 2.0f - 12 * UIPadding);
+	auto characterContainerSize = glm::vec2(0.5f * windowSize.x - 12.f * UIPadding,
+	                                        0.5f * windowSize.y - 12.f * UIPadding);
 
 	auto playerImageSize = glm::vec2(1.8f / 5.0f * characterContainerSize.x,
 	                                 1.8f / 5.0f * characterContainerSize.x * (54.0f / 48.0f));
@@ -415,6 +436,10 @@ int main(int argc, char* argv[]) {
 	playerHealth.setPosition(glm::vec2(-(characterContainerSize.x / 2.0f - playerImageSize.x - 3 * UIPadding),
 	                                   -characterContainerSize.y / 2 + 20.0f + UIPadding));
 	playerHealth.setOrigin(glm::vec2(0.0f, 0.5f));
+	auto& playerHealthSpriteBackground = playerHealth.addScriptableBehaviour<SpriteRenderer>(
+		"assets/textures/square.png", false);
+	playerHealthSpriteBackground.setColor(Theme::activeTheme->background);
+	playerHealthSpriteBackground.setSize(glm::vec2(characterContainerSize.x - playerImageSize.x - 4 * UIPadding, 40));
 	auto& playerHealthSprite = playerHealth.addScriptableBehaviour<FilledSpriteRenderer>(
 		"assets/textures/square.png", false);
 	playerHealthSprite.setSize(glm::vec2(characterContainerSize.x - playerImageSize.x - 4 * UIPadding, 40));
@@ -426,29 +451,9 @@ int main(int argc, char* argv[]) {
 	auto [playerHealthLabel2, playerHealthLabel2Text] = DeconstructLabel(
 		MakeLabel("Lato", "##/##", 24, TextAlignment::RIGHT, Theme::activeTheme->primaryText));
 	playerHealthLabel2.setPosition(
-		glm::vec2(characterContainerSize.x / 2.0f + playerImageSize.x / 2.0f - (4 + 2 + 1) * UIPadding, 0));
+		glm::vec2(characterContainerSize.x / 2.0f + playerImageSize.x / 2.0f - (4 + 2 + 1.5f) * UIPadding, 0));
 	playerHealth.addChild(playerHealthLabel1);
 	playerHealth.addChild(playerHealthLabel2);
-
-	// Todo: implement experience/levels
-	auto& playerLevel = MakeEmpty();
-	playerLevel.setPosition(glm::vec2(-(characterContainerSize.x / 2.0f - playerImageSize.x - 3 * UIPadding),
-	                                  -characterContainerSize.y / 2 + 20.0f + 40.0f + 1.5f * UIPadding));
-	playerLevel.setOrigin(glm::vec2(0.0f, 0.5f));
-	auto& playerLevelSprite = playerLevel.addScriptableBehaviour<FilledSpriteRenderer>(
-		"assets/textures/square.png", false);
-	playerLevelSprite.setSize(glm::vec2(characterContainerSize.x - playerImageSize.x - 4 * UIPadding, 40));
-	playerLevelSprite.setColor(Theme::activeTheme->themeColor2);
-	playerLevelSprite.setFillAmount(1);
-	auto [playerLevelLabel1, playerLevelLabel1Text] = DeconstructLabel(
-		MakeLabel("Lato", "Level: ##", 24, TextAlignment::LEFT, Theme::activeTheme->primaryText));
-	playerLevelLabel1.setPosition(glm::vec2(UIPadding, 0));
-	auto [playerLevelLabel2, playerLevelLabel2Text] = DeconstructLabel(
-		MakeLabel("Lato", "###/###", 24, TextAlignment::RIGHT, Theme::activeTheme->primaryText));
-	playerLevelLabel2.setPosition(
-		glm::vec2(characterContainerSize.x / 2.0f + playerImageSize.x / 2.0f - (4 + 2 + 1) * UIPadding, 0));
-	playerLevel.addChild(playerLevelLabel1);
-	playerLevel.addChild(playerLevelLabel2);
 
 	auto [playerName, playerNameLabel] = DeconstructLabel(
 		MakeLabel("Lato", "<CharacterName>", 32, TextAlignment::LEFT, Theme::activeTheme->primaryText));
@@ -487,19 +492,91 @@ int main(int argc, char* argv[]) {
 	playerHeal.setPosition(glm::vec2(playerImageSize.x / 2.0f + UIPadding,
 	                                 characterContainerSize.y / 2.0f - 0.5f * buttonHeight - 1.0f * UIPadding));
 
+	auto [playerVitAttrSpriteContainer, playerVitAttrSprite] = DeconstructSprite(
+		MakeSprite("assets/textures/attributes/vitality.png", glm::vec2(32 + 2.0f * UIPadding)));
+	playerVitAttrSpriteContainer.setPosition(glm::vec2(0, -12));
+	auto [playerVitAttrLabelContainer, playerVitAttrLabel] = DeconstructLabel(
+		MakeLabel("Lato", "#", 24, TextAlignment::CENTER, Theme::activeTheme->primaryText));
+	playerVitAttrLabelContainer.setPosition(glm::vec2(0, 16 + 1.0f * UIPadding));
+	auto [playerVitAttrContainer, playerVitAttrBackground] = DeconstructSprite(
+		MakeSprite("assets/textures/square.png", glm::vec2(32 + 2.0f * UIPadding, 56 + 3.0f * UIPadding)));
+	playerVitAttrBackground.setColor(Theme::activeTheme->themeColor2);
+	playerVitAttrContainer.setPosition(glm::vec2(
+		-0.5f * characterContainerSize.x + playerImageSize.x + 4.0f * UIPadding + 16,
+		-0.5f * characterContainerSize.y + 68.0f + 3.5f * UIPadding));
+	playerVitAttrContainer.addChild(playerVitAttrSpriteContainer);
+	playerVitAttrContainer.addChild(playerVitAttrLabelContainer);
+
+	auto [playerAtkAttrSpriteContainer, playerAtkAttrSprite] = DeconstructSprite(
+        MakeSprite("assets/textures/attributes/attack.png", glm::vec2(32 + 2.0f * UIPadding)));
+	playerAtkAttrSpriteContainer.setPosition(glm::vec2(0, -12));
+	auto [playerAtkAttrLabelContainer, playerAtkAttrLabel] = DeconstructLabel(
+        MakeLabel("Lato", "#", 24, TextAlignment::CENTER, Theme::activeTheme->primaryText));
+	playerAtkAttrLabelContainer.setPosition(glm::vec2(0, 16 + 1.0f * UIPadding));
+	auto [playerAtkAttrContainer, playerAtkAttrBackground] = DeconstructSprite(
+        MakeSprite("assets/textures/square.png", glm::vec2(32 + 2.0f * UIPadding, 56 + 3.0f * UIPadding)));
+	playerAtkAttrBackground.setColor(Theme::activeTheme->themeColor2);
+	playerAtkAttrContainer.setPosition(glm::vec2(
+        -0.5f * characterContainerSize.x + playerImageSize.x + 6.5f * UIPadding + 48,
+        -0.5f * characterContainerSize.y + 68.0f + 3.5f * UIPadding));
+	playerAtkAttrContainer.addChild(playerAtkAttrSpriteContainer);
+	playerAtkAttrContainer.addChild(playerAtkAttrLabelContainer);
+
+	auto [playerDefAttrSpriteContainer, playerDefAttrSprite] = DeconstructSprite(
+        MakeSprite("assets/textures/attributes/defense.png", glm::vec2(32 + 2.0f * UIPadding)));
+	playerDefAttrSpriteContainer.setPosition(glm::vec2(0, -12));
+	auto [playerDefAttrLabelContainer, playerDefAttrLabel] = DeconstructLabel(
+        MakeLabel("Lato", "#", 24, TextAlignment::CENTER, Theme::activeTheme->primaryText));
+	playerDefAttrLabelContainer.setPosition(glm::vec2(0, 16 + 1.0f * UIPadding));
+	auto [playerDefAttrContainer, playerDefAttrBackground] = DeconstructSprite(
+        MakeSprite("assets/textures/square.png", glm::vec2(32 + 2.0f * UIPadding, 56 + 3.0f * UIPadding)));
+	playerDefAttrBackground.setColor(Theme::activeTheme->themeColor2);
+	playerDefAttrContainer.setPosition(glm::vec2(
+        -0.5f * characterContainerSize.x + playerImageSize.x + 9.0f * UIPadding + 80,
+        -0.5f * characterContainerSize.y + 68.0f + 3.5f * UIPadding));
+	playerDefAttrContainer.addChild(playerDefAttrSpriteContainer);
+	playerDefAttrContainer.addChild(playerDefAttrLabelContainer);
+
+	auto [playerStmAttrSpriteContainer, playerStmAttrSprite] = DeconstructSprite(
+        MakeSprite("assets/textures/attributes/stamina.png", glm::vec2(32 + 2.0f * UIPadding)));
+	playerStmAttrSpriteContainer.setPosition(glm::vec2(0, -12));
+	auto [playerStmAttrLabelContainer, playerStmAttrLabel] = DeconstructLabel(
+        MakeLabel("Lato", "#", 24, TextAlignment::CENTER, Theme::activeTheme->primaryText));
+	playerStmAttrLabelContainer.setPosition(glm::vec2(0, 16 + 1.0f * UIPadding));
+	auto [playerStmAttrContainer, playerStmAttrBackground] = DeconstructSprite(
+        MakeSprite("assets/textures/square.png", glm::vec2(32 + 2.0f * UIPadding, 56 + 3.0f * UIPadding)));
+	playerStmAttrBackground.setColor(Theme::activeTheme->themeColor2);
+	playerStmAttrContainer.setPosition(glm::vec2(
+        -0.5f * characterContainerSize.x + playerImageSize.x + 11.5f * UIPadding + 112,
+        -0.5f * characterContainerSize.y + 68.0f + 3.5f * UIPadding));
+	playerStmAttrContainer.addChild(playerStmAttrSpriteContainer);
+	playerStmAttrContainer.addChild(playerStmAttrLabelContainer);
+
 	auto [playerContainer, playerContainerBackground] = DeconstructSprite(
 		MakeSprite("assets/textures/square.png", characterContainerSize));
 	playerContainerBackground.setColor(Theme::activeTheme->panelLight);
 	playerContainer.setPosition(glm::vec2(characterContainerSize.x / 2.0f + 4.0f * UIPadding,
 	                                      windowSize.y / 2.0f - characterContainerSize.y / 2.0f));
+
+	auto [playerFocusIcon, playerFocusIconSprite] = DeconstructSprite(
+		MakeSprite("assets/textures/status/focus.png", glm::vec2(64))
+	);
+	playerFocusIcon.setPosition(glm::vec2(-0.5f * characterContainerSize.x + 32 + UIPadding,
+	                                      0.5f * characterContainerSize.y - 32 - UIPadding));
+	playerFocusIconSprite.setSmooth(true);
+
 	playerContainer.addChild(playerImageObject);
 	playerContainer.addChild(playerHealth);
-	playerContainer.addChild(playerLevel);
 	playerContainer.addChild(playerName);
 	playerContainer.addChild(playerStatus);
 	playerContainer.addChild(playerAttack);
 	playerContainer.addChild(playerFocus);
 	playerContainer.addChild(playerHeal);
+	playerContainer.addChild(playerFocusIcon);
+	playerContainer.addChild(playerVitAttrContainer);
+	playerContainer.addChild(playerAtkAttrContainer);
+	playerContainer.addChild(playerDefAttrContainer);
+	playerContainer.addChild(playerStmAttrContainer);
 
 	auto enemyImageSize = glm::vec2(1.8f / 5.0f * characterContainerSize.x,
 	                                1.8f / 5.0f * characterContainerSize.x * (54.0f / 48.0f));
@@ -511,6 +588,10 @@ int main(int argc, char* argv[]) {
 	enemyHealth.setPosition(glm::vec2(-(characterContainerSize.x / 2.0f - enemyImageSize.x - 3 * UIPadding),
 	                                  -characterContainerSize.y / 2 + 20.0f + UIPadding));
 	enemyHealth.setOrigin(glm::vec2(0.0f, 0.5f));
+	auto& enemyHealthSpriteBackground = enemyHealth.addScriptableBehaviour<SpriteRenderer>(
+		"assets/textures/square.png", false);
+	enemyHealthSpriteBackground.setSize(glm::vec2(characterContainerSize.x - enemyImageSize.x - 4 * UIPadding, 40));
+	enemyHealthSpriteBackground.setColor(Theme::activeTheme->background);
 	auto& enemyHealthSprite = enemyHealth.addScriptableBehaviour<FilledSpriteRenderer>(
 		"assets/textures/square.png", false);
 	enemyHealthSprite.setSize(glm::vec2(characterContainerSize.x - enemyImageSize.x - 4 * UIPadding, 40));
@@ -522,7 +603,7 @@ int main(int argc, char* argv[]) {
 	auto [enemyHealthLabel2, enemyHealthLabel2Text] = DeconstructLabel(
 		MakeLabel("Lato", "##/##", 24, TextAlignment::RIGHT, Theme::activeTheme->primaryText));
 	enemyHealthLabel2.setPosition(
-		glm::vec2(characterContainerSize.x / 2.0f + enemyImageSize.x / 2.0f - (4 + 2 + 1) * UIPadding, 0));
+		glm::vec2(characterContainerSize.x / 2.0f + enemyImageSize.x / 2.0f - (4 + 2 + 1.5f) * UIPadding, 0));
 	enemyHealth.addChild(enemyHealthLabel1);
 	enemyHealth.addChild(enemyHealthLabel2);
 
@@ -536,6 +617,66 @@ int main(int argc, char* argv[]) {
 	enemyName.setPosition(glm::vec2(characterContainerSize.x / 2.0f,
 	                                -characterContainerSize.y / 2.0f - 16 - 0.5f * UIPadding));
 
+	auto [enemyVitAttrSpriteContainer, enemyVitAttrSprite] = DeconstructSprite(
+		MakeSprite("assets/textures/attributes/vitality.png", glm::vec2(32 + 2.0f * UIPadding)));
+	enemyVitAttrSpriteContainer.setPosition(glm::vec2(0, -12));
+	auto [enemyVitAttrLabelContainer, enemyVitAttrLabel] = DeconstructLabel(
+		MakeLabel("Lato", "#", 24, TextAlignment::CENTER, Theme::activeTheme->primaryText));
+	enemyVitAttrLabelContainer.setPosition(glm::vec2(0, 16 + 1.0f * UIPadding));
+	auto [enemyVitAttrContainer, enemyVitAttrBackground] = DeconstructSprite(
+		MakeSprite("assets/textures/square.png", glm::vec2(32 + 2.0f * UIPadding, 56 + 3.0f * UIPadding)));
+	enemyVitAttrBackground.setColor(Theme::activeTheme->themeColor2);
+	enemyVitAttrContainer.setPosition(glm::vec2(
+		-0.5f * characterContainerSize.x + enemyImageSize.x + 4.0f * UIPadding + 16,
+		-0.5f * characterContainerSize.y + 68.0f + 3.5f * UIPadding));
+	enemyVitAttrContainer.addChild(enemyVitAttrSpriteContainer);
+	enemyVitAttrContainer.addChild(enemyVitAttrLabelContainer);
+
+	auto [enemyAtkAttrSpriteContainer, enemyAtkAttrSprite] = DeconstructSprite(
+        MakeSprite("assets/textures/attributes/attack.png", glm::vec2(32 + 2.0f * UIPadding)));
+	enemyAtkAttrSpriteContainer.setPosition(glm::vec2(0, -12));
+	auto [enemyAtkAttrLabelContainer, enemyAtkAttrLabel] = DeconstructLabel(
+        MakeLabel("Lato", "#", 24, TextAlignment::CENTER, Theme::activeTheme->primaryText));
+	enemyAtkAttrLabelContainer.setPosition(glm::vec2(0, 16 + 1.0f * UIPadding));
+	auto [enemyAtkAttrContainer, enemyAtkAttrBackground] = DeconstructSprite(
+        MakeSprite("assets/textures/square.png", glm::vec2(32 + 2.0f * UIPadding, 56 + 3.0f * UIPadding)));
+	enemyAtkAttrBackground.setColor(Theme::activeTheme->themeColor2);
+	enemyAtkAttrContainer.setPosition(glm::vec2(
+        -0.5f * characterContainerSize.x + enemyImageSize.x + 6.5f * UIPadding + 48,
+        -0.5f * characterContainerSize.y + 68.0f + 3.5f * UIPadding));
+	enemyAtkAttrContainer.addChild(enemyAtkAttrSpriteContainer);
+	enemyAtkAttrContainer.addChild(enemyAtkAttrLabelContainer);
+
+	auto [enemyDefAttrSpriteContainer, enemyDefAttrSprite] = DeconstructSprite(
+        MakeSprite("assets/textures/attributes/defense.png", glm::vec2(32 + 2.0f * UIPadding)));
+	enemyDefAttrSpriteContainer.setPosition(glm::vec2(0, -12));
+	auto [enemyDefAttrLabelContainer, enemyDefAttrLabel] = DeconstructLabel(
+        MakeLabel("Lato", "#", 24, TextAlignment::CENTER, Theme::activeTheme->primaryText));
+	enemyDefAttrLabelContainer.setPosition(glm::vec2(0, 16 + 1.0f * UIPadding));
+	auto [enemyDefAttrContainer, enemyDefAttrBackground] = DeconstructSprite(
+        MakeSprite("assets/textures/square.png", glm::vec2(32 + 2.0f * UIPadding, 56 + 3.0f * UIPadding)));
+	enemyDefAttrBackground.setColor(Theme::activeTheme->themeColor2);
+	enemyDefAttrContainer.setPosition(glm::vec2(
+        -0.5f * characterContainerSize.x + enemyImageSize.x + 9.0f * UIPadding + 80,
+        -0.5f * characterContainerSize.y + 68.0f + 3.5f * UIPadding));
+	enemyDefAttrContainer.addChild(enemyDefAttrSpriteContainer);
+	enemyDefAttrContainer.addChild(enemyDefAttrLabelContainer);
+
+	auto [enemyStmAttrSpriteContainer, enemyStmAttrSprite] = DeconstructSprite(
+        MakeSprite("assets/textures/attributes/stamina.png", glm::vec2(32 + 2.0f * UIPadding)));
+	enemyStmAttrSpriteContainer.setPosition(glm::vec2(0, -12));
+	auto [enemyStmAttrLabelContainer, enemyStmAttrLabel] = DeconstructLabel(
+        MakeLabel("Lato", "#", 24, TextAlignment::CENTER, Theme::activeTheme->primaryText));
+	enemyStmAttrLabelContainer.setPosition(glm::vec2(0, 16 + 1.0f * UIPadding));
+	auto [enemyStmAttrContainer, enemyStmAttrBackground] = DeconstructSprite(
+        MakeSprite("assets/textures/square.png", glm::vec2(32 + 2.0f * UIPadding, 56 + 3.0f * UIPadding)));
+	enemyStmAttrBackground.setColor(Theme::activeTheme->themeColor2);
+	enemyStmAttrContainer.setPosition(glm::vec2(
+        -0.5f * characterContainerSize.x + enemyImageSize.x + 11.5f * UIPadding + 112,
+        -0.5f * characterContainerSize.y + 68.0f + 3.5f * UIPadding));
+	enemyStmAttrContainer.addChild(enemyStmAttrSpriteContainer);
+	enemyStmAttrContainer.addChild(enemyStmAttrLabelContainer);
+
 	auto [enemyContainer, enemyContainerBackground] = DeconstructSprite(
 		MakeSprite("assets/textures/square.png", characterContainerSize));
 	enemyContainerBackground.setColor(Theme::activeTheme->panelLight);
@@ -545,6 +686,10 @@ int main(int argc, char* argv[]) {
 	enemyContainer.addChild(enemyHealth);
 	enemyContainer.addChild(enemyName);
 	enemyContainer.addChild(enemyStatus);
+	enemyContainer.addChild(enemyVitAttrContainer);
+	enemyContainer.addChild(enemyAtkAttrContainer);
+	enemyContainer.addChild(enemyDefAttrContainer);
+	enemyContainer.addChild(enemyStmAttrContainer);
 
 	auto [infoArea, infoAreaSprite] = DeconstructSprite(MakeSprite("assets/textures/square.png",
 	                                                               glm::vec2(characterContainerSize.x,
@@ -573,12 +718,18 @@ int main(int argc, char* argv[]) {
 	auto& playerController = gameContainer.addScriptableBehaviour<PlayerController>(
 		player, playerAttackButton, playerHealButton, playerFocusButton);
 	auto& playerVisualizer = gameContainer.addScriptableBehaviour<CharacterVisualizer>(
-		player, &playerImageSprite, &playerHealthSprite, &playerHealthLabel2Text, &playerNameLabel, &playerLevelSprite,
-		&playerLevelLabel1Text, &playerLevelLabel2Text);
+		player, &playerImageSprite, &playerHealthSprite, &playerHealthLabel2Text, &playerNameLabel, &playerVitAttrLabel, &playerAtkAttrLabel, &playerDefAttrLabel, &playerStmAttrLabel);
 	auto& enemyVisualizer = gameContainer.addScriptableBehaviour<CharacterVisualizer>(
-		nullptr, &enemyImageSprite, &enemyHealthSprite, &enemyHealthLabel2Text, &enemyNameLabel);
+		nullptr, &enemyImageSprite, &enemyHealthSprite, &enemyHealthLabel2Text, &enemyNameLabel, &enemyVitAttrLabel, &enemyAtkAttrLabel, &enemyDefAttrLabel, &enemyStmAttrLabel);
 	auto& gameController = gameContainer.addScriptableBehaviour<GameController>(
-		infoAreaController, playerController, playerVisualizer, enemyVisualizer, playerStatusLabel, enemyStatusLabel);
+		infoAreaController, playerController, playerVisualizer, enemyVisualizer, playerStatusLabel, enemyStatusLabel,
+		playerFocusIconSprite);
+	gameController.setOnPlayerDeath(
+		[&scoreboard, &sceneManager](const int difficulty, const int score, const std::string playerName) {
+			scoreboard.addScore({difficulty, score, playerName});
+			sceneManager.popScene();
+			sceneManager.stackScene("gameOver", true);
+		});
 
 	continueGameController.setGameController(&gameController);
 	playerAttackButton.setOnClick([&gameController]() { gameController.playerAttack(); });
@@ -596,6 +747,31 @@ int main(int argc, char* argv[]) {
 	gameContainer.addChild(fleeBattle);
 	gameScene.addChild(gameContainer);
 #pragma endregion
+
+#pragma region Game Over Scene
+	auto [backToMenu, backToMenuSprite, backToMenuLabel, backToMenuButton] = DeconstructButton(
+		MakeButton("assets/textures/square.png", glm::vec2(200, 40), "Lato",
+							"Back", 32, TextAlignment::CENTER, Theme::activeTheme->secondaryText)
+	);
+	backToMenu.setPosition(glm::vec2(0, 0.5f * windowSize.y - 20 - UIPadding));
+	backToMenuButton.setOnClick([&sceneManager]() {
+		sceneManager.popScene();
+		sceneManager.stackScene("mainMenu", true);
+	});
+
+	auto& gameOverText = MakeLabel("Lato", "YOU DIED!", 64, TextAlignment::CENTER, Theme::activeTheme->primaryText);
+	gameOverText.setPosition(glm::vec2(0, -48 - UIPadding));
+	auto [scoreText, scoreTextLabel] = DeconstructLabel(MakeLabel("Lato", "SCORE: ###", 32, TextAlignment::CENTER, Theme::activeTheme->primaryText));
+	scoreText.addScriptableBehaviour<GameOverScore>(scoreTextLabel, scoreboard);
+
+	auto& gameOverContainer = MakeEmpty();
+	gameOverContainer.setPosition(glm::vec2(0.5f*windowSize.x, 0.5f * windowSize.y));
+	gameOverContainer.addChild(backToMenu);
+	gameOverContainer.addChild(gameOverText);
+	gameOverContainer.addChild(scoreText);
+	
+	gameOverScene.addChild(gameOverContainer);
+#pragma endregion 
 
 	while (window.isOpen()) {
 		sf::Time timeStep = deltaClock.restart();

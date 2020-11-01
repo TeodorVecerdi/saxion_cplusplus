@@ -32,7 +32,7 @@ public:
     int getHealPower() const;
 
     bool takeDamage(int damage);
-    void heal(int healPower);
+    int heal(int healPower);
 
     void setIsPlayer(bool isPlayer);
     void randomize(int maxPoints);
@@ -70,7 +70,6 @@ private://static
     /// Exponential Growth formula used by leveling system.
     /// </summary>
     static float expGrowth(const float initial, const float growth, const float time) {
-        const float value = initial * std::pow(1.0f + growth, time);
-        return value;
+        return initial * std::pow(1.0f + growth, time);
     }
 };

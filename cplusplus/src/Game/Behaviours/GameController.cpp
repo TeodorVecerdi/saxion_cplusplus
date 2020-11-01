@@ -4,35 +4,43 @@
 #include "InfoArea.hpp"
 #include "PlayerController.hpp"
 #include "Core/IO.hpp"
+#include "Core/Behaviours/SpriteRenderer.hpp"
 #include "Core/Behaviours/TextRenderer.hpp"
-#include "Game/Character.hpp"
+#include "Game/State/Character.hpp"
 #include "Game/State/Difficulty.hpp"
 
 GameController::GameController(InfoArea& infoArea, PlayerController& playerController,
                                CharacterVisualizer& playerVisualizer,
                                CharacterVisualizer& enemyVisualizer, TextRenderer& playerStatusText,
-                               TextRenderer& enemyStatusText) : GameController(
+                               TextRenderer& enemyStatusText, SpriteRenderer& focusRenderer) : GameController(
 	default_identifier(this), infoArea, playerController, playerVisualizer, enemyVisualizer, playerStatusText,
-	enemyStatusText) {
+	enemyStatusText, focusRenderer) {
 }
 
 GameController::GameController(const std::string& identifier, InfoArea& infoArea, PlayerController& playerController,
                                CharacterVisualizer& playerVisualizer, CharacterVisualizer& enemyVisualizer,
-                               TextRenderer& playerStatusText, TextRenderer& enemyStatusText) :
+                               TextRenderer& playerStatusText, TextRenderer& enemyStatusText,
+                               SpriteRenderer& focusRenderer) :
 	ScriptableBehaviour(identifier), infoArea(infoArea), playerController(playerController),
 	playerVisualizer(playerVisualizer),
-	enemyVisualizer(enemyVisualizer), playerStatusText(playerStatusText), enemyStatusText(enemyStatusText) {
+	enemyVisualizer(enemyVisualizer), playerStatusText(playerStatusText), enemyStatusText(enemyStatusText),
+	focusRenderer(focusRenderer) {
 
-	currentEnemy = new Character();
+	currentEnemy = std::make_shared<Character>();
 	loadedGame = false;
 	player = this->playerController.getPlayer();
+	focusRenderer.setEnabled(false);
 }
 
 void GameController::onStart() {
+	infoArea.Clear();
+
 	if (!loadedGame) {
 		nextEnemy();
 		enemiesKilled = 0;
 		enemyVisualizer.setCharacter(currentEnemy);
+	} else {
+		loadedGame = false;
 	}
 
 	playerVisualizer.setCharacter(player);
@@ -84,7 +92,7 @@ void GameController::onUpdate(const sf::Time ts) {
 		return;
 	}
 	if (player->getHealth() <= 0) {
-		// TODO: Implement player death.
+		onPlayerDeath(Difficulty::GetDifficulty(), enemiesKilled, player->getName());
 	}
 }
 
@@ -111,8 +119,15 @@ void GameController::disablePlayer() {
 void GameController::playerAttack() {
 	playerVisualizer.setState(ATTACK);
 	enemyVisualizer.setState(HURT);
-	const int attackPower = player->getAttackPower();
-	const bool evaded = currentEnemy->takeDamage(attackPower);
+	int attackPower = player->getAttackPower();
+	if (playerFocused) attackPower += rand() % (attackPower / 2);
+	bool evaded = currentEnemy->takeDamage(attackPower);
+	if (playerFocused && evaded) {
+		evaded = currentEnemy->takeDamage(attackPower);
+	}
+	if (playerFocused) {
+		endFocus();
+	}
 	if (evaded) {
 		infoArea.AddInfoMessage(string_format("%s (you) tried to attack %s, but missed.", player->getName().c_str(),
 		                                      currentEnemy->getName().c_str()));
@@ -120,6 +135,7 @@ void GameController::playerAttack() {
 		infoArea.AddInfoMessage(string_format("%s (you) successfully attacked %s taking away %i health points.",
 		                                      player->getName().c_str(), currentEnemy->getName().c_str(), attackPower));
 	}
+
 	currentOrder = !currentOrder;
 	waitingForPlayer = false;
 	playerStatusText.setText("Attacking!");
@@ -129,7 +145,11 @@ void GameController::playerAttack() {
 
 void GameController::playerHeal() {
 	int healPower = player->getHealPower();
-	player->heal(healPower);
+	if (playerFocused) healPower += rand() % (healPower / 2);
+	healPower = player->heal(healPower);
+	if (playerFocused) {
+		endFocus();
+	}
 	infoArea.AddInfoMessage(string_format("%s (you) recovered %i health points.", player->getName().c_str(),
 	                                      healPower));
 	currentOrder = !currentOrder;
@@ -147,6 +167,7 @@ void GameController::playerFocus() {
 			player->getName().c_str()));
 		playerStatusText.setText("Focusing!");
 		playerStatusTextTimer = statusTextTime;
+		beginFocus();
 	} else {
 		infoArea.AddInfoMessage(string_format("%s (you) tried to focus, but failed.", player->getName().c_str()));
 	}
@@ -154,6 +175,49 @@ void GameController::playerFocus() {
 	currentOrder = !currentOrder;
 	waitingForPlayer = false;
 	disablePlayer();
+}
+
+void GameController::beginFocus() {
+	focusRenderer.setEnabled(true);
+	playerFocused = true;
+}
+
+void GameController::endFocus() {
+	focusRenderer.setEnabled(false);
+	infoArea.AddInfoMessage(string_format("%s (you) is no longer focused.", player->getName().c_str()));
+	playerFocused = false;
+}
+
+void GameController::enemyAct() {
+	const int enemyChance = rand() % 100;
+	if (enemyChance < Difficulty::GetDifficultySettings().EnemyAttackChance) {
+		enemyVisualizer.setState(ATTACK);
+		playerVisualizer.setState(HURT);
+		const int attackPower = currentEnemy->getAttackPower();
+		const bool evaded = player->takeDamage(attackPower);
+		if (evaded) {
+			infoArea.AddInfoMessage(string_format("%s tried to attack %s (you), but missed.",
+                                                  currentEnemy->getName().c_str(), player->getName().c_str()));
+		} else {
+			infoArea.AddInfoMessage(string_format("%s successfully attacked %s (you) taking away %i health points.",
+                                                  currentEnemy->getName().c_str(), player->getName().c_str(),
+                                                  attackPower));
+		}
+		enemyStatusText.setText("Attacking!");
+		enemyStatusTextTimer = statusTextTime;
+	} else if (enemyChance < Difficulty::GetDifficultySettings().EnemyHealChance) {
+		int healPower = currentEnemy->getHealPower();
+		healPower = currentEnemy->heal(healPower);
+		enemyStatusText.setText("Healing!");
+		infoArea.AddInfoMessage(string_format("%s recovered %i health points.", currentEnemy->getName().c_str(),
+                                              healPower));
+		enemyStatusTextTimer = statusTextTime;
+	} else if (enemyChance < Difficulty::GetDifficultySettings().EnemyDoNothingChance) {
+		// Do nothing
+		enemyStatusText.setText("Trembling in fear!");
+		infoArea.AddInfoMessage(string_format("%s trembles in fear.", currentEnemy->getName().c_str()));
+		enemyStatusTextTimer = statusTextTime;
+	}
 }
 
 void GameController::continueGame() {
@@ -171,6 +235,7 @@ void GameController::continueGame() {
 		Difficulty::SetActiveDifficulty(difficulty);
 		IO::EndRead();
 	}
+
 	reset();
 	loadedGame = true;
 }
@@ -188,41 +253,18 @@ void GameController::saveGame() const {
 	currentEnemy->exportCharacter("assets/data/save_game/enemy.txt", std::ios::out);
 }
 
-void GameController::enemyAct() {
-	const int enemyChance = rand() % 100;
-	if (enemyChance < Difficulty::GetDifficultySettings().EnemyAttackChance) {
-		enemyVisualizer.setState(ATTACK);
-		playerVisualizer.setState(HURT);
-		const int attackPower = currentEnemy->getAttackPower();
-		const bool evaded = player->takeDamage(attackPower);
-		if (evaded) {
-			infoArea.AddInfoMessage(string_format("%s tried to attack %s (you), but missed.",
-			                                      currentEnemy->getName().c_str(), player->getName().c_str()));
-		} else {
-			infoArea.AddInfoMessage(string_format("%s successfully attacked %s (you) taking away %i health points.",
-			                                      currentEnemy->getName().c_str(), player->getName().c_str(),
-			                                      attackPower));
-		}
-		enemyStatusText.setText("Attacking!");
-		enemyStatusTextTimer = statusTextTime;
-	} else if (enemyChance < Difficulty::GetDifficultySettings().EnemyHealChance) {
-		int healPower = currentEnemy->getHealPower();
-		currentEnemy->heal(healPower);
-		enemyStatusText.setText("Healing!");
-		infoArea.AddInfoMessage(string_format("%s recovered %i health points.", currentEnemy->getName().c_str(),
-		                                      healPower));
-		enemyStatusTextTimer = statusTextTime;
-	} else if (enemyChance < Difficulty::GetDifficultySettings().EnemyDoNothingChance) {
-		// Do nothing
-		enemyStatusText.setText("Trembling in fear!");
-		infoArea.AddInfoMessage(string_format("%s trembles in fear.", currentEnemy->getName().c_str()));
-		enemyStatusTextTimer = statusTextTime;
-	}
+void GameController::setOnPlayerDeath(std::function<void(int,int,std::string)> onPlayerDeath) {
+	this->onPlayerDeath = onPlayerDeath;
+
 }
 
 void GameController::nextEnemy() {
 	currentEnemy->randomize(Difficulty::GetDifficultySettings().EnemyBaseAttrPoints);
-	const auto name = capitalize(currentEnemy->getCharacterType());
+	const auto name = string_format("Enemy %s", capitalize(currentEnemy->getCharacterType()).c_str());
 	currentEnemy->setName(name);
 	enemyVisualizer.setCharacter(currentEnemy); // update sprite
+	infoArea.Clear();
+	auto newEnemyMessage = string_format("A wild %s appears!", name.c_str());
+	auto separator = std::string(static_cast<int>(newEnemyMessage.size()*1.3f), '-');
+	infoArea.AddInfoMessage(string_format("%s\n%s", newEnemyMessage.c_str(), separator.c_str()));
 }

@@ -39,6 +39,13 @@ static std::string capitalize(std::string str) {
 	return string_format("%c%s", toupper(str[0]), str.substr(1).c_str());
 }
 
+static std::string get_spacing_tabs(std::string str, uint32_t tabs, uint32_t tabSize = 4) {
+	int totalSize = tabs * tabSize;
+	totalSize -= str.size();
+	if(totalSize < 0) totalSize = 0;
+	return std::string(totalSize, ' ');
+}
+
 template <typename T>
 static std::string default_identifier(T* object) {
 	auto typeName = std::string(typeid(T).name());

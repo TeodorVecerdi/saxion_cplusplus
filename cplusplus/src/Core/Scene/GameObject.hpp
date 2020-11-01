@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Core.hpp"
+#include "Core/Core.hpp"
 #include "ScriptableBehaviour.hpp"
 #include "Transform2D.hpp"
 template <typename T> concept behaviour_type = std::is_base_of<ScriptableBehaviour, T>::value;

@@ -19,6 +19,10 @@ public:
 		return difficultySettings[activeDifficulty];
 	}
 
+	static std::string GetDifficultyName(const int difficulty) {
+		return difficultyFiles[difficulty];
+	}
+
 private:
 	Difficulty() = delete;
 	Difficulty(const Difficulty&) = delete;

@@ -1,0 +1,15 @@
+####### CHARACTER [Gerry]_[Zombie]
+#name
+Gerry
+#characterType
+zombie
+#health
+15
+#vitality
+3
+#attack
+4
+#defense
+2
+#stamina
+2

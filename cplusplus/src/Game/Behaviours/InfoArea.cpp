@@ -15,7 +15,11 @@ InfoArea::InfoArea(const std::string& identifier, const uint32_t textSize, const
 	maxMessages(maxMessages), infoAreaContainer(infoAreaContainer) {
 }
 
-void InfoArea::onStart() {
+void InfoArea::AddInfoMessage(const std::string message) {
+	// Make sure messages were initialized before adding a message.
+	// Could have put this inside onStart, but if other behaviours
+	// add messages in their onStart, then I can't guarantee this
+	// onStart was called before the other onStart.
 	if (!initializedMessages) {
 		initializedMessages = true;
 		const auto spacing = (infoAreaContainer.getSize().y - 2 * padding - maxMessages * textSize) / (maxMessages - 1);
@@ -26,11 +30,9 @@ void InfoArea::onStart() {
 			messageRenderers.push_back(&messageLabel);
 			owner->addChild(message);
 		}
+		messages.clear();
 	}
-	messages.clear();
-}
 
-void InfoArea::AddInfoMessage(const std::string message) {
 	messages.push_back(message);
 	if (messages.size() > maxMessages)
 		messages.erase(messages.begin());
@@ -58,4 +60,10 @@ void InfoArea::AddInfoMessage(const std::string message) {
 			}
 		}
 	}
+}
+
+void InfoArea::Clear() {
+	for (auto messageRenderer : messageRenderers)
+		messageRenderer->setText("");
+	messages.clear();
 }

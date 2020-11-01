@@ -1,0 +1,9 @@
+####### GAME STATE
+#Enemies killed
+0
+#Current order
+1
+#Attack priority
+0
+#Difficulty
+2
